@@ -296,3 +296,34 @@
 .logo-glitch-container.glitch-active > .logo-main-img {
   animation: glitch-burst 0.4s ease-out;
 }
+
+/* Neon letter flicker */
+@keyframes neon-flicker-anim {
+  0% { opacity: 1; }
+  15% { opacity: 0.15; filter: brightness(0.3); }
+  30% { opacity: 0.8; }
+  45% { opacity: 0.1; color: hsl(var(--neon-cyan)); }
+  60% { opacity: 0.9; }
+  75% { opacity: 0.2; filter: brightness(2); }
+  100% { opacity: 1; filter: brightness(1); }
+}
+
+.neon-flicker {
+  animation: neon-flicker-anim 0.3s ease-in-out;
+  display: inline-block;
+}
+
+/* Pixel ship fly-across */
+@keyframes ship-fly {
+  0% { left: -30px; opacity: 0; }
+  5% { opacity: 1; }
+  95% { opacity: 1; }
+  100% { left: calc(100vw + 30px); opacity: 0; }
+}
+
+.pixel-ship {
+  animation: ship-fly 2.5s linear forwards;
+  color: hsl(var(--neon-cyan));
+  text-shadow: 0 0 6px hsl(var(--neon-cyan) / 0.8);
+  font-family: monospace;
+}
