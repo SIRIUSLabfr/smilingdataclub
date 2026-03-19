@@ -9,7 +9,7 @@ const FlickerTagline = ({ text }: { text: string }) => {
       const count = 2 + Math.floor(Math.random() * 2); // 2-3 letters
       const indices = new Set<number>();
       const validIndices = [...text].reduce<number[]>((acc, ch, i) => {
-        if (ch !== ' ' && ch !== '.' && ch !== ''') return [...acc, i];
+        if (ch !== ' ' && ch !== '.') return [...acc, i];
         return acc;
       }, []);
       while (indices.size < count && indices.size < validIndices.length) {
