@@ -31,7 +31,7 @@ const TeamSection = () => {
               key={member.name}
               className="rounded-lg bg-card neon-border-cyan p-5 text-left transition-all duration-300 hover:scale-[1.03] hover:shadow-[0_0_24px_hsl(var(--primary)/0.45)]"
             >
-              <div className="aspect-square overflow-hidden rounded mb-4">
+              <div className="aspect-square overflow-hidden rounded mb-4 w-[60%] mx-auto">
                 <img
                   src={member.img}
                   alt={member.name}
