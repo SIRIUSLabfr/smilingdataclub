@@ -22,7 +22,7 @@ const TeamSection = () => {
           DAS TEAM
         </h2>
         <p className="text-muted-foreground mb-16 text-sm md:text-base">
-          Sechs Menschen. Ein Ziel. Null Langeweile.
+          It's dangerous to go alone! Take these.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
