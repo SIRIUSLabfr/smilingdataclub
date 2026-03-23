@@ -1,6 +1,7 @@
 import HeroSection from "@/components/HeroSection";
 import AboutSection from "@/components/AboutSection";
 import TopicsSection from "@/components/TopicsSection";
+import TeamSection from "@/components/TeamSection";
 import CodeSection from "@/components/CodeSection";
 import WaitlistSection from "@/components/WaitlistSection";
 import FooterSection from "@/components/FooterSection";
