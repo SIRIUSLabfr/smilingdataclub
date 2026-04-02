@@ -82,6 +82,7 @@ const HeroSection = () => {
   const [loaded, setLoaded] = useState(false);
   const [glitchKey, setGlitchKey] = useState(0);
   const [glitching, setGlitching] = useState(false);
+  const [drifting, setDrifting] = useState(false);
   const timeoutRef = useRef<number | null>(null);
 
   const triggerGlitch = () => {
@@ -90,6 +91,11 @@ const HeroSection = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = window.setTimeout(() => setGlitching(false), 400);
   };
+
+  const triggerDrift = useCallback(() => {
+    setDrifting(true);
+    setTimeout(() => setDrifting(false), 2000);
+  }, []);
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 100);
@@ -103,6 +109,12 @@ const HeroSection = () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
+
+  useEffect(() => {
+    const initial = setTimeout(triggerDrift, 5000);
+    const interval = setInterval(triggerDrift, 12000);
+    return () => { clearTimeout(initial); clearInterval(interval); };
+  }, [triggerDrift]);
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
