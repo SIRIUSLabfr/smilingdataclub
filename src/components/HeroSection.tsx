@@ -128,21 +128,22 @@ const HeroSection = () => {
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
         <div className="mb-8">
           <div
-            className={`logo-glitch-container inline-block relative ${glitching ? 'glitch-active' : ''}`}
+            className={`logo-glitch-container inline-block relative ${glitching ? 'glitch-active' : ''} ${drifting ? 'logo-drift-active' : ''}`}
             onMouseEnter={triggerGlitch}
           >
             <img
               src={sdcLogo}
               alt="Smiling Data Club Logo"
-              className={`logo-main-img w-32 h-32 md:w-40 md:h-40 mx-auto drop-shadow-[0_0_30px_hsl(172,100%,45%,0.3)] ${
+              className={`logo-main-img w-48 h-48 md:w-64 md:h-64 mx-auto drop-shadow-[0_0_40px_hsl(172,100%,45%,0.4)] ${
                 loaded ? 'logo-glitch-load' : 'opacity-0'
               }`}
+              style={{ imageRendering: 'auto' }}
             />
             <div key={`r-${glitchKey}`} className="logo-rgb-layer logo-rgb-red absolute inset-0">
-              <img src={sdcLogo} alt="" aria-hidden="true" className="w-32 h-32 md:w-40 md:h-40" />
+              <img src={sdcLogo} alt="" aria-hidden="true" className="w-48 h-48 md:w-64 md:h-64" />
             </div>
             <div key={`c-${glitchKey}`} className="logo-rgb-layer logo-rgb-cyan absolute inset-0">
-              <img src={sdcLogo} alt="" aria-hidden="true" className="w-32 h-32 md:w-40 md:h-40" />
+              <img src={sdcLogo} alt="" aria-hidden="true" className="w-48 h-48 md:w-64 md:h-64" />
             </div>
           </div>
         </div>
