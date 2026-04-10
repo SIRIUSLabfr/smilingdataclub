@@ -147,9 +147,10 @@ const Datenschutz = () => {
           <Section title="6. Cookies">
             <p>
               Diese Website verwendet Cookies. Technisch notwendige Cookies werden auf Grundlage von
-              Art. 6 Abs. 1 lit. f DSGVO gesetzt. Analyse-Cookies werden nur mit Ihrer Einwilligung
-              gesetzt (Art. 6 Abs. 1 lit. a DSGVO) und können über das Cookie-Banner verwaltet
-              werden.
+              Art. 6 Abs. 1 lit. f DSGVO gesetzt. Für das Websitetracking setzt Zoho Marketing
+              Automation ein Cookie (zsiq), das Besucher sitzungsübergreifend identifiziert — dieses
+              Cookie wird nur mit Ihrer Einwilligung gesetzt (Art. 6 Abs. 1 lit. a DSGVO) und kann
+              über das Cookie-Banner verwaltet werden.
             </p>
             <p className="mt-2">
               Sie können Ihren Browser so einstellen, dass Sie über das Setzen von Cookies informiert
