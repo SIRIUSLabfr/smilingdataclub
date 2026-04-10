@@ -125,15 +125,14 @@ const Datenschutz = () => {
 
           <Section title="5. Webanalyse">
             <p>
-              Zur Analyse des Nutzungsverhaltens setzen wir Zoho Analytics bzw. vergleichbare
-              Analysefunktionen innerhalb der Zoho-Plattform ein. Dabei können folgende Daten
-              erhoben werden:
+              Zur Analyse des Nutzungsverhaltens setzen wir Zoho Marketing Automation (Websitetracking) ein. Dabei können folgende Daten erhoben werden:
             </p>
             <ul className="list-disc list-inside mt-2 space-y-1 text-muted-foreground">
               <li>Seitenaufrufe und Verweildauer</li>
               <li>Gerätetyp, Bildschirmauflösung</li>
               <li>Ungefährer Standort (auf Basis der IP-Adresse)</li>
               <li>Referrer (verweisende Seite)</li>
+              <li>Interaktionen mit E-Mails (Öffnungen, Klicks)</li>
             </ul>
             <p className="mt-2">
               Die Verarbeitung erfolgt auf Grundlage Ihrer Einwilligung (Art. 6 Abs. 1 lit. a
