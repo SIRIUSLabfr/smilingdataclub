@@ -14,10 +14,13 @@ const WaitlistSection = () => {
 
     setIsSubmitting(true);
     try {
+      const formData = new URLSearchParams();
+      formData.append("email", email);
+
       await fetch(WEBHOOK_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formData.toString(),
         mode: "no-cors",
       });
       toast.success("Danke! Bitte bestätige deine Anmeldung per E-Mail. 📬");
