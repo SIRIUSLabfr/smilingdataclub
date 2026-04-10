@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { toast } from "sonner";
 
 const WEBHOOK_URL =
-  "https://flow.zoho.eu/20106110113/flow/webhook/incoming?zapikey=1001.0ccd122c2824a51d4309ea2b4ef7c7e5.e8e31339336bcce2a43b9785fc2ed8a4&isdebug=false";
+  "https://flow.zoho.eu/20106110113/flow/webhook/incoming?zapikey=1001.77f60d1bef32a7c890168dc859249116.e3cb163ca883cc45cd9d5915f6a5e195&isdebug=true";
 
 const WaitlistSection = () => {
   const [email, setEmail] = useState("");
