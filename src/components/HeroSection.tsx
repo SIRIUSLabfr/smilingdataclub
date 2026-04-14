@@ -462,8 +462,8 @@ const HeroSection = () => {
       <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-accent/20 via-secondary/5 to-transparent" />
       <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-background to-transparent" />
 
-      {/* Pixel ship Easter egg */}
-      <PixelShip />
+      {/* Pac-Man animation */}
+      <PacmanGhost />
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
         <div className="mb-8">
