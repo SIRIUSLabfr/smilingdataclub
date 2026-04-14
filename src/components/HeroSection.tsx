@@ -94,14 +94,14 @@ const PacmanGhost = () => {
     }
 
     // State
-    let px = -30, py = H * 0.5;
-    let dir = 1; // 1=right, -1=left
+    let px = 30, py = H * 0.5;
+    let dir = 1;
     let speed = 1.2;
     let mouthOpen = true;
     let mouthTimer = 0;
     const ghosts = ghostColors.map((c, i) => ({
-      x: -60 - i * 35,
-      y: H * 0.5,
+      x: px - (30 + i * 30),
+      y: py,
       color: c,
     }));
 
@@ -154,13 +154,13 @@ const PacmanGhost = () => {
       const pacSprite = mouthOpen ? pacRight : pacClosed;
       drawSprite(pacSprite, px, py, '#ffff00', dir === -1);
 
-      // Move & draw ghosts
+      // Move & draw ghosts (follow pac-man closely)
       for (let i = 0; i < ghosts.length; i++) {
         const g = ghosts[i];
-        const targetX = px - dir * (30 + i * 30);
+        const targetX = px - dir * (28 + i * 28);
         const targetY = py;
-        g.x += (targetX - g.x) * 0.03;
-        g.y += (targetY - g.y) * 0.03;
+        g.x += (targetX - g.x) * 0.08;
+        g.y += (targetY - g.y) * 0.08;
         drawSprite(ghost, g.x, g.y, g.color, dir === -1);
       }
 
