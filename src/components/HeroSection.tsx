@@ -78,6 +78,65 @@ const PixelShip = () => {
   );
 };
 
+const PixelBomb = () => {
+  const [exploding, setExploding] = useState(false);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setExploding(true);
+      setTimeout(() => setExploding(false), 800);
+    }, 10000);
+    const initial = setTimeout(() => {
+      setExploding(true);
+      setTimeout(() => setExploding(false), 800);
+    }, 3000);
+    return () => { clearInterval(interval); clearTimeout(initial); };
+  }, []);
+
+  const particles = Array.from({ length: 12 }, (_, i) => {
+    const angle = (i / 12) * Math.PI * 2;
+    const dist = 20 + Math.random() * 15;
+    return {
+      x: Math.cos(angle) * dist,
+      y: Math.sin(angle) * dist,
+      char: ['▪', '▫', '◾', '◽', '■', '□', '▮', '▯'][Math.floor(Math.random() * 8)],
+    };
+  });
+
+  return (
+    <span className="relative inline-block w-8 h-8 align-middle">
+      {!exploding && (
+        <span className="absolute inset-0 flex items-center justify-center text-lg" style={{ imageRendering: 'pixelated' }}>
+          💣
+        </span>
+      )}
+      {exploding && (
+        <>
+          <span className="absolute inset-0 flex items-center justify-center text-lg animate-ping" style={{ imageRendering: 'pixelated' }}>
+            💥
+          </span>
+          {particles.map((p, i) => (
+            <span
+              key={i}
+              className="absolute text-[8px] text-primary"
+              style={{
+                left: '50%',
+                top: '50%',
+                transform: `translate(${p.x}px, ${p.y}px)`,
+                opacity: 0,
+                animation: 'bomb-particle 0.8s ease-out forwards',
+                animationDelay: `${i * 30}ms`,
+              }}
+            >
+              {p.char}
+            </span>
+          ))}
+        </>
+      )}
+    </span>
+  );
+};
+
 const PixelateCanvas = ({
   imageSrc,
   width,
@@ -225,13 +284,7 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Krisen Simulator Button top-right */}
-      <a
-        href="/game"
-        className="absolute top-4 right-4 z-50 font-pixel text-[10px] md:text-xs px-3 py-2 border border-primary/60 rounded bg-background/80 text-primary hover:bg-primary/20 hover:shadow-[0_0_15px_hsl(var(--primary)/0.4)] transition-all duration-300 backdrop-blur-sm"
-      >
-        ⚡ KRISEN SIMULATOR
-      </a>
+      {/* No top-right button anymore */}
       <div className="absolute inset-0 synthwave-grid" />
       <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-accent/20 via-secondary/5 to-transparent" />
       <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-background to-transparent" />
@@ -269,8 +322,8 @@ const HeroSection = () => {
           <FlickerTagline text="Today's complexity. Retro simplicity." />
         </p>
 
-        <a href="#waitlist" className="neon-btn rounded-md inline-block">
-          Jetzt beitreten
+        <a href="/game" className="neon-btn rounded-md inline-flex items-center gap-3">
+          <PixelBomb /> KRISEN SIMULATOR <PixelBomb />
         </a>
       </div>
 
