@@ -426,7 +426,7 @@ const Game = () => {
         {screen === "start" && (
           <section className="min-h-[80vh] flex flex-col items-center justify-center px-6 text-center">
             <h1 className="font-pixel text-3xl md:text-5xl lg:text-6xl text-glow-pink text-secondary mb-6 leading-relaxed">
-              PROBE STERBEN
+              KRISEN SIMULATOR
             </h1>
             <p className="text-foreground/80 max-w-xl text-base md:text-lg mb-10">
               Wie krisenanfällig ist euer Unternehmen? Findet es in 3&nbsp;Minuten heraus.
