@@ -7,6 +7,7 @@ import Index from "./pages/Index.tsx";
 import Impressum from "./pages/Impressum.tsx";
 import Datenschutz from "./pages/Datenschutz.tsx";
 import NotFound from "./pages/NotFound.tsx";
+import Game from "./pages/Game.tsx";
 
 const queryClient = new QueryClient();
 
