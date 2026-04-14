@@ -43,14 +43,6 @@ const LEVELS: Level[] = [
           { text: "Nein, nur eine Person hat alle Zugänge", points: 0 },
         ],
       },
-      {
-        text: "Könntet ihr nächsten Monat eure Bilanz erstellen, wenn eure Buchhaltungsperson heute kündigt?",
-        answers: [
-          { text: "Ja, kein Problem", points: 3 },
-          { text: "Mit Verzögerung und externer Hilfe", points: 2 },
-          { text: "Ehrlich? Keine Ahnung", points: 0 },
-        ],
-      },
     ],
   },
   {
@@ -64,7 +56,7 @@ const LEVELS: Level[] = [
         answers: [
           { text: "Ja, vollständig und aktuell", points: 3 },
           { text: "Das CRM wird genutzt, aber vieles fehlt", points: 2 },
-          { text: "Die wichtigsten Kontakte kennt nur der Vertriebler", points: 0 },
+          { text: "CRM???", points: 0 },
         ],
       },
       {
@@ -97,14 +89,6 @@ const LEVELS: Level[] = [
           { text: "Ja, in einem Passwort-Manager mit geteiltem Zugang", points: 3 },
           { text: "Teilweise, manches ist dokumentiert", points: 2 },
           { text: "Das meiste kennt nur eine Person", points: 0 },
-        ],
-      },
-      {
-        text: "Wurde euer Backup-System in den letzten 6 Monaten getestet — also ein echtes Restore durchgeführt?",
-        answers: [
-          { text: "Ja, regelmäßig", points: 3 },
-          { text: "Wir haben Backups, aber nie getestet", points: 2 },
-          { text: "Ich bin mir nicht sicher, ob wir Backups haben", points: 0 },
         ],
       },
       {
@@ -151,32 +135,32 @@ const LEVELS: Level[] = [
   },
   {
     key: "technik",
-    name: "TECHNIK / PRODUKTION",
+    name: "ENTWICKLUNG / PRODUKTION",
     icon: "⚙️",
-    intro: "Euer Techniker. Kennt jede Maschine. Weiß, warum Ventil 3 nach links muss. Steht in keinem Handbuch.",
+    intro: "Eure Produktion. Qualitätsstandards, Wissensmanagement, Prozessdokumentation — wer weiß, wie es wirklich läuft?",
     questions: [
       {
-        text: "Gibt es aktuelle Dokumentation für eure wichtigsten Maschinen, Anlagen oder technischen Systeme — inklusive Workarounds?",
+        text: "Ist euer Qualitätsmanagement (QM) so dokumentiert, dass eine neue Person die Standards sofort umsetzen könnte?",
         answers: [
-          { text: "Ja, vollständig und aktuell", points: 3 },
-          { text: "Herstellerdoku ja, interne Workarounds nein", points: 2 },
-          { text: "Das meiste ist Erfahrungswissen", points: 0 },
+          { text: "Ja, QM-Handbuch ist aktuell und vollständig", points: 3 },
+          { text: "Teilweise, aber vieles ist veraltet oder lückenhaft", points: 2 },
+          { text: "QM existiert nur in den Köpfen einzelner Mitarbeiter", points: 0 },
         ],
       },
       {
-        text: "Könnte ein externer Techniker eure Anlage innerhalb eines Tages wieder zum Laufen bringen, wenn der Hauptverantwortliche ausfällt?",
+        text: "Gibt es ein funktionierendes Wissensmanagement-System, in dem Produktionswissen, Rezepturen oder Verfahren festgehalten werden?",
         answers: [
-          { text: "Ja, alles ist nachvollziehbar dokumentiert", points: 3 },
-          { text: "Mit Schwierigkeiten", points: 2 },
-          { text: "Nein, da müsste man erstmal verstehen, was überhaupt verbaut ist", points: 0 },
+          { text: "Ja, systematisch gepflegt und für alle zugänglich", points: 3 },
+          { text: "Teilweise, aber nicht einheitlich oder aktuell", points: 2 },
+          { text: "Nein, das Wissen steckt in einzelnen Köpfen", points: 0 },
         ],
       },
       {
-        text: "Werden Änderungen an Konfigurationen, Einstellungen oder Prozessen protokolliert?",
+        text: "Werden Änderungen an Produktionsprozessen, Rezepturen oder Qualitätsstandards nachvollziehbar dokumentiert?",
         answers: [
-          { text: "Ja, systematisch", points: 3 },
-          { text: "Manchmal", points: 2 },
-          { text: "Nein", points: 0 },
+          { text: "Ja, mit Versionierung und Freigabeprozess", points: 3 },
+          { text: "Manchmal, aber nicht konsequent", points: 2 },
+          { text: "Nein, Änderungen werden einfach gemacht", points: 0 },
         ],
       },
     ],
