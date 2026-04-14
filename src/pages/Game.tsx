@@ -326,7 +326,7 @@ const Game = () => {
   const totalQuestions = LEVELS.reduce((sum, l) => sum + l.questions.length, 0);
   const maxScore = totalQuestions * 3;
   const totalScore = levelScores.reduce((a, b) => a + b, 0);
-  const overallRisk = getOverallRisk(totalScore);
+  const overallRisk = getOverallRisk(totalScore, maxScore);
 
   const handleAnswer = useCallback((points: number) => {
     setSelectedAnswer(points);
