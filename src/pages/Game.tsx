@@ -358,17 +358,18 @@ const Game = () => {
 
     const levelScoreData: Record<string, { score: number; max: number; risiko: string }> = {};
     LEVELS.forEach((l, i) => {
-      levelScoreData[l.key] = { score: levelScores[i], max: 9, risiko: getDeptRisk(levelScores[i]) };
+      const lMax = l.questions.length * 3;
+      levelScoreData[l.key] = { score: levelScores[i], max: lMax, risiko: getDeptRisk(levelScores[i], lMax) };
     });
 
     const payload = {
       ...formData,
       gesamtscore: totalScore,
-      max_score: 54,
+      max_score: maxScore,
       gesamt_risiko: overallRisk,
       level_scores: levelScoreData,
-      gameover_count: levelScores.filter(s => getDeptRisk(s) === "GAME OVER").length,
-      highrisk_count: levelScores.filter(s => getDeptRisk(s) === "HIGH RISK").length,
+      gameover_count: LEVELS.filter((l, i) => getDeptRisk(levelScores[i], l.questions.length * 3) === "GAME OVER").length,
+      highrisk_count: LEVELS.filter((l, i) => getDeptRisk(levelScores[i], l.questions.length * 3) === "HIGH RISK").length,
       antworten: answers,
     };
 
@@ -509,8 +510,9 @@ const Game = () => {
             {/* Department Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
               {LEVELS.map((level, i) => {
+                const lMax = level.questions.length * 3;
                 const score = levelScores[i];
-                const risk = getDeptRisk(score);
+                const risk = getDeptRisk(score, lMax);
                 const colors = riskColor(risk);
                 const solution = SOLUTIONS[level.key]?.[risk] ?? "";
                 return (
@@ -522,7 +524,7 @@ const Game = () => {
                       <span className="text-xl">{level.icon}</span>
                       <h3 className="font-pixel text-[10px] text-foreground">{level.name}</h3>
                     </div>
-                    <HealthBar value={score} max={9} risk={risk} />
+                    <HealthBar value={score} max={lMax} risk={risk} />
                     <p className={`font-pixel text-[9px] mt-2 ${colors.text}`}>{risk}</p>
                     <p className="text-foreground/60 text-xs mt-2 leading-relaxed">{solution}</p>
                   </div>
