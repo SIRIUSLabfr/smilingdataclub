@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import FooterSection from "@/components/FooterSection";
+import pixelBuchhaltung from "@/assets/pixel-buchhaltung.png";
+import pixelVertrieb from "@/assets/pixel-vertrieb.png";
+import pixelIt from "@/assets/pixel-it.png";
+import pixelAssistenz from "@/assets/pixel-assistenz.png";
+import pixelTechnik from "@/assets/pixel-technik.png";
+import pixelGf from "@/assets/pixel-gf.png";
 
 const WEBHOOK_URL = "https://PLATZHALTER.zohoflow.eu/webhook/...";
 const BOOKING_URL = "https://PLATZHALTER.zohobookings.eu/...";
