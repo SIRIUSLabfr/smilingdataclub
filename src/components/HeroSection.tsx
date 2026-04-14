@@ -6,7 +6,7 @@ const FlickerTagline = ({ text }: { text: string }) => {
 
   useEffect(() => {
     const triggerFlicker = () => {
-      const count = 2 + Math.floor(Math.random() * 2); // 2-3 letters
+      const count = 2 + Math.floor(Math.random() * 2);
       const indices = new Set<number>();
       const validIndices = [...text].reduce<number[]>((acc, ch, i) => {
         if (ch !== ' ' && ch !== '.') return [...acc, i];
@@ -29,7 +29,7 @@ const FlickerTagline = ({ text }: { text: string }) => {
       {[...text].map((ch, i) => (
         <span
           key={i}
-          className={flickerIndices.has(i) ? 'neon-flicker' : ''}
+          className={flickerIndices.has(i) ? 'opacity-20 transition-opacity duration-150' : 'transition-opacity duration-150'}
         >
           {ch}
         </span>
@@ -40,13 +40,13 @@ const FlickerTagline = ({ text }: { text: string }) => {
 
 const PixelShip = () => {
   const [ships, setShips] = useState<{ id: number; y: number; direction: number }[]>([]);
-  const idRef = useRef(0);
 
   useEffect(() => {
+    let idCounter = 0;
     const launch = () => {
-      const y = 15 + Math.random() * 70; // 15-85% from top
+      const id = idCounter++;
+      const y = 10 + Math.random() * 80;
       const direction = Math.random() > 0.5 ? 1 : -1;
-      const id = idRef.current++;
       setShips(prev => [...prev, { id, y, direction }]);
       setTimeout(() => {
         setShips(prev => prev.filter(s => s.id !== id));
@@ -78,12 +78,177 @@ const PixelShip = () => {
   );
 };
 
+interface Particle {
+  x: number;
+  y: number;
+  originX: number;
+  originY: number;
+  color: string;
+  size: number;
+  vx: number;
+  vy: number;
+  alpha: number;
+}
+
+const PixelScatterCanvas = ({
+  imageSrc,
+  width,
+  height,
+  active,
+}: {
+  imageSrc: string;
+  width: number;
+  height: number;
+  active: boolean;
+}) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const particlesRef = useRef<Particle[]>([]);
+  const animFrameRef = useRef<number>(0);
+  const phaseRef = useRef<'idle' | 'scatter' | 'reassemble'>('idle');
+  const progressRef = useRef(0);
+  const imgRef = useRef<HTMLImageElement | null>(null);
+
+  // Load image and extract pixels
+  useEffect(() => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.src = imageSrc;
+    img.onload = () => {
+      imgRef.current = img;
+      // Sample pixels from image
+      const tmpCanvas = document.createElement('canvas');
+      const pixelSize = 4; // sample every 4px
+      tmpCanvas.width = width;
+      tmpCanvas.height = height;
+      const ctx = tmpCanvas.getContext('2d')!;
+      ctx.drawImage(img, 0, 0, width, height);
+      const imageData = ctx.getImageData(0, 0, width, height);
+      const particles: Particle[] = [];
+
+      for (let y = 0; y < height; y += pixelSize) {
+        for (let x = 0; x < width; x += pixelSize) {
+          const i = (y * width + x) * 4;
+          const r = imageData.data[i];
+          const g = imageData.data[i + 1];
+          const b = imageData.data[i + 2];
+          const a = imageData.data[i + 3];
+          if (a < 30) continue; // skip transparent pixels
+
+          const angle = Math.random() * Math.PI * 2;
+          const speed = 1.5 + Math.random() * 4;
+          particles.push({
+            x, y,
+            originX: x,
+            originY: y,
+            color: `rgba(${r},${g},${b},${a / 255})`,
+            size: pixelSize,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            alpha: 1,
+          });
+        }
+      }
+      particlesRef.current = particles;
+    };
+  }, [imageSrc, width, height]);
+
+  useEffect(() => {
+    if (active && phaseRef.current === 'idle') {
+      phaseRef.current = 'scatter';
+      progressRef.current = 0;
+    }
+  }, [active]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+
+    const animate = () => {
+      ctx.clearRect(0, 0, width, height);
+      const particles = particlesRef.current;
+
+      if (phaseRef.current === 'idle') {
+        // Draw original image
+        if (imgRef.current) {
+          ctx.drawImage(imgRef.current, 0, 0, width, height);
+        }
+      } else if (phaseRef.current === 'scatter') {
+        progressRef.current += 0.018;
+        const t = Math.min(progressRef.current, 1);
+        const eased = t * t; // ease-in
+
+        for (const p of particles) {
+          p.x = p.originX + p.vx * eased * 60;
+          p.y = p.originY + p.vy * eased * 60;
+          p.alpha = Math.max(0, 1 - eased * 1.2);
+
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+        }
+        ctx.globalAlpha = 1;
+
+        if (t >= 1) {
+          phaseRef.current = 'reassemble';
+          progressRef.current = 0;
+        }
+      } else if (phaseRef.current === 'reassemble') {
+        progressRef.current += 0.025;
+        const t = Math.min(progressRef.current, 1);
+        // ease-out
+        const eased = 1 - (1 - t) * (1 - t);
+
+        for (const p of particles) {
+          const scatteredX = p.originX + p.vx * 60;
+          const scatteredY = p.originY + p.vy * 60;
+          p.x = scatteredX + (p.originX - scatteredX) * eased;
+          p.y = scatteredY + (p.originY - scatteredY) * eased;
+          p.alpha = Math.min(1, eased * 1.3);
+
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(p.x, p.y, p.size, p.size);
+        }
+        ctx.globalAlpha = 1;
+
+        if (t >= 1) {
+          phaseRef.current = 'idle';
+          // Reset particles
+          for (const p of particles) {
+            p.x = p.originX;
+            p.y = p.originY;
+            p.alpha = 1;
+          }
+        }
+      }
+
+      animFrameRef.current = requestAnimationFrame(animate);
+    };
+
+    animFrameRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(animFrameRef.current);
+  }, [width, height]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      width={width}
+      height={height}
+      className="mx-auto"
+      style={{ imageRendering: 'pixelated' }}
+    />
+  );
+};
+
 const HeroSection = () => {
   const [loaded, setLoaded] = useState(false);
   const [glitchKey, setGlitchKey] = useState(0);
   const [glitching, setGlitching] = useState(false);
   const [drifting, setDrifting] = useState(false);
   const timeoutRef = useRef<number | null>(null);
+  const isMd = typeof window !== 'undefined' && window.innerWidth >= 768;
+  const logoSize = isMd ? 256 : 192;
 
   const triggerGlitch = () => {
     setGlitchKey((k) => k + 1);
@@ -94,7 +259,7 @@ const HeroSection = () => {
 
   const triggerDrift = useCallback(() => {
     setDrifting(true);
-    setTimeout(() => setDrifting(false), 2000);
+    setTimeout(() => setDrifting(false), 3000);
   }, []);
 
   useEffect(() => {
@@ -135,22 +300,21 @@ const HeroSection = () => {
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
         <div className="mb-8">
           <div
-            className={`logo-glitch-container inline-block relative ${glitching ? 'glitch-active' : ''} ${drifting ? 'logo-drift-active' : ''}`}
+            className={`inline-block relative ${glitching ? 'glitch-active' : ''}`}
             onMouseEnter={triggerGlitch}
+            style={{ width: logoSize, height: logoSize }}
           >
-            <img
-              src={sdcLogo}
-              alt="Smiling Data Club Logo"
-              className={`logo-main-img w-48 h-48 md:w-64 md:h-64 mx-auto drop-shadow-[0_0_40px_hsl(172,100%,45%,0.4)] ${
-                loaded ? 'logo-glitch-load' : 'opacity-0'
+            <div
+              className={`drop-shadow-[0_0_40px_hsl(172,100%,45%,0.4)] ${
+                loaded ? 'animate-fade-in' : 'opacity-0'
               }`}
-              style={{ imageRendering: 'auto' }}
-            />
-            <div key={`r-${glitchKey}`} className="logo-rgb-layer logo-rgb-red absolute inset-0">
-              <img src={sdcLogo} alt="" aria-hidden="true" className="w-48 h-48 md:w-64 md:h-64" />
-            </div>
-            <div key={`c-${glitchKey}`} className="logo-rgb-layer logo-rgb-cyan absolute inset-0">
-              <img src={sdcLogo} alt="" aria-hidden="true" className="w-48 h-48 md:w-64 md:h-64" />
+            >
+              <PixelScatterCanvas
+                imageSrc={sdcLogo}
+                width={logoSize}
+                height={logoSize}
+                active={drifting}
+              />
             </div>
           </div>
         </div>
