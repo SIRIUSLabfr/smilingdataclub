@@ -91,7 +91,9 @@ const PixelBomb = () => {
     const S = 48; // canvas size
     const P = 3;  // pixel size for that chunky look
 
-    // Draw a pixel-art bomb (8x8 grid scaled by P)
+    // Draw a pixel-art bomb centered in canvas (16x16 grid at P=3)
+    const OX = 4; // offset to center the 8-wide bomb in 16-wide canvas
+    const OY = 4;
     const drawBomb = () => {
       ctx.clearRect(0, 0, S, S);
       const bombPixels = [
@@ -110,7 +112,7 @@ const PixelBomb = () => {
       ];
       for (const p of bombPixels) {
         ctx.fillStyle = p.c;
-        ctx.fillRect(p.x * P, p.y * P, P, P);
+        ctx.fillRect((p.x + OX) * P, (p.y + OY) * P, P, P);
       }
     };
 
