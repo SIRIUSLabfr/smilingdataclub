@@ -391,11 +391,11 @@ const HeroSection = () => {
 
         <a
           href="/game"
-          className="font-pixel text-[10px] md:text-xs px-2 py-2 border border-accent rounded bg-background/80 text-primary hover:bg-accent/20 hover:shadow-[0_0_15px_hsl(var(--accent)/0.4)] transition-all duration-300 backdrop-blur-sm inline-grid grid-cols-[32px_auto_32px] items-center justify-items-center gap-1 text-center"
+          className="font-pixel text-[10px] md:text-xs py-2 px-3 border border-accent rounded bg-background/80 text-primary hover:bg-accent/20 hover:shadow-[0_0_15px_hsl(var(--accent)/0.4)] transition-all duration-300 backdrop-blur-sm inline-flex items-center justify-center"
         >
-          <PixelBomb />
-          <span>KRISEN SIMULATOR</span>
-          <PixelBomb />
+          <span className="flex-shrink-0 w-8 flex justify-center"><PixelBomb /></span>
+          <span className="mx-1">KRISEN SIMULATOR</span>
+          <span className="flex-shrink-0 w-8 flex justify-center"><PixelBomb /></span>
         </a>
       </div>
 
