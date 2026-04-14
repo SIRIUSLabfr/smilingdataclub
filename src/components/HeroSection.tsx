@@ -88,10 +88,6 @@ const PongBackground = () => {
       ctx.clearRect(0, 0, W, H);
       ctx.fillStyle = 'hsl(172, 100%, 45%)';
 
-      // Center dashed line
-      for (let y = 0; y < H; y += P * 4) {
-        ctx.fillRect(W / 2 - P / 2, y, P, P * 2);
-      }
 
       // AI paddles (simple tracking)
       const leftTarget = ballY - paddleH / 2;
