@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import FooterSection from "@/components/FooterSection";
+import pixelBuchhaltung from "@/assets/pixel-buchhaltung.png";
+import pixelVertrieb from "@/assets/pixel-vertrieb.png";
+import pixelIt from "@/assets/pixel-it.png";
+import pixelAssistenz from "@/assets/pixel-assistenz.png";
+import pixelTechnik from "@/assets/pixel-technik.png";
+import pixelGf from "@/assets/pixel-gf.png";
 
 const WEBHOOK_URL = "https://PLATZHALTER.zohoflow.eu/webhook/...";
 const BOOKING_URL = "https://PLATZHALTER.zohobookings.eu/...";
@@ -24,7 +30,7 @@ const LEVELS: Level[] = [
   {
     key: "buchhaltung",
     name: "BUCHHALTUNG",
-    icon: "💰",
+    icon: pixelBuchhaltung,
     intro: "Eure Buchhaltung. 14 Jahre Erfahrung. Kennt jeden Posten. Was, wenn sie morgen nicht mehr kommt?",
     questions: [
       {
@@ -48,7 +54,7 @@ const LEVELS: Level[] = [
   {
     key: "vertrieb",
     name: "VERTRIEB",
-    icon: "🤝",
+    icon: pixelVertrieb,
     intro: "Euer Vertriebsleiter. 120 Kontakte. Die besten davon nicht im CRM, sondern in seinem Kopf.",
     questions: [
       {
@@ -80,7 +86,7 @@ const LEVELS: Level[] = [
   {
     key: "it",
     name: "IT-ADMINISTRATION",
-    icon: "🖥️",
+    icon: pixelIt,
     intro: "Euer IT-Admin. Hält alles am Laufen. Aber weiß jemand anders, WIE?",
     questions: [
       {
@@ -104,7 +110,7 @@ const LEVELS: Level[] = [
   {
     key: "assistenz",
     name: "ASSISTENZ DER GF",
-    icon: "📋",
+    icon: pixelAssistenz,
     intro: "Sie kennt jede Frist, jeden Vertrag, jeden Code. Das organisatorische Gedächtnis eures Unternehmens.",
     questions: [
       {
@@ -136,7 +142,7 @@ const LEVELS: Level[] = [
   {
     key: "technik",
     name: "ENTWICKLUNG / PRODUKTION",
-    icon: "⚙️",
+    icon: pixelTechnik,
     intro: "Eure Produktion. Qualitätsstandards, Wissensmanagement, Prozessdokumentation — wer weiß, wie es wirklich läuft?",
     questions: [
       {
@@ -168,7 +174,7 @@ const LEVELS: Level[] = [
   {
     key: "geschaeftsfuehrung",
     name: "GESCHÄFTSFÜHRUNG",
-    icon: "👔",
+    icon: pixelGf,
     intro: "Und jetzt die unbequemste Frage: Was passiert, wenn IHR morgen nicht mehr da seid?",
     questions: [
       {
@@ -442,8 +448,8 @@ const Game = () => {
             <p className="font-pixel text-xs text-primary mb-2 tracking-widest">
               LEVEL {currentLevel + 1}/{LEVELS.length}
             </p>
-            <h2 className="font-pixel text-sm md:text-base text-secondary mb-4 text-glow-pink">
-              {LEVELS[currentLevel].icon} {LEVELS[currentLevel].name}
+            <h2 className="font-pixel text-sm md:text-base text-secondary mb-4 text-glow-pink flex items-center gap-2">
+              <img src={LEVELS[currentLevel].icon} alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} /> {LEVELS[currentLevel].name}
             </h2>
 
             {currentQuestion === 0 && (
@@ -521,7 +527,7 @@ const Game = () => {
                     className={`rounded-lg border border-border/50 bg-card/60 p-5 ${colors.glow} transition-all`}
                   >
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="text-xl">{level.icon}</span>
+                      <img src={level.icon} alt={level.name} className="w-8 h-8" style={{ imageRendering: "pixelated" }} loading="lazy" />
                       <h3 className="font-pixel text-[10px] text-foreground">{level.name}</h3>
                     </div>
                     <HealthBar value={score} max={lMax} risk={risk} />
