@@ -221,9 +221,9 @@ const SOLUTIONS: Record<string, Record<string, string>> = {
     "GAME OVER": "Verträge, Fristen, Zugangscodes — alles im Kopf einer Person. Fällt sie aus, verpasst ihr Fristen, von denen ihr nicht mal wisst.",
   },
   technik: {
-    "MEDIUM RISK": "Herstellerdoku vorhanden, interne Workarounds fehlen. Eine Wissensdatenbank für eure spezifischen Anpassungen wäre der nächste Schritt.",
-    "HIGH RISK": "Technisches Erfahrungswissen ist nicht dokumentiert. Jeder Workaround, jede Sondereinstellung muss raus aus dem Kopf und rein ins System.",
-    "GAME OVER": "Eure Maschinen laufen, weil eine Person weiß, wie. Kein Handbuch, keine Doku, keine Chance für einen Ersatz. Maschine steht = Produktion steht.",
+    "MEDIUM RISK": "QM-Grundlagen vorhanden. Ein aktuelles Wissensmanagement-System und konsequente Prozessdokumentation würden euch absichern.",
+    "HIGH RISK": "Produktionswissen und Qualitätsstandards sind personengebunden. Ohne systematisches Wissensmanagement riskiert ihr Qualitätsverlust bei jedem Personalwechsel.",
+    "GAME OVER": "Kein dokumentiertes QM, kein Wissensmanagement. Eure Produktionsqualität hängt an einzelnen Köpfen. Fällt jemand aus, fehlt das Know-how.",
   },
   geschaeftsfuehrung: {
     "MEDIUM RISK": "Teilweise geregelt, aber nicht vollständig. Prokura, Notfallplan und dokumentierte Partnerschaften machen euch resilient.",
