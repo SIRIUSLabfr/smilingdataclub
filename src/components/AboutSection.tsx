@@ -1,26 +1,25 @@
-import { Smile, Trophy, Cpu } from "lucide-react";
+import pixelSmile from "@/assets/pixel-smile.png";
+import pixelTrophy from "@/assets/pixel-trophy.png";
+import pixelCpu from "@/assets/pixel-cpu.png";
 
 const cards = [
   {
-    icon: Smile,
+    icon: pixelSmile,
     title: "Happy Employee",
     description: "Technologie, die den Alltag erleichtert — nicht verkompliziert.",
     glowClass: "box-glow-cyan neon-border-cyan",
-    iconColor: "text-primary",
   },
   {
-    icon: Trophy,
+    icon: pixelTrophy,
     title: "Happy Boss",
     description: "Messbare Ergebnisse durch smarte Prozesse und klare Datenströme.",
     glowClass: "box-glow-pink neon-border-pink",
-    iconColor: "text-secondary",
   },
   {
-    icon: Cpu,
+    icon: pixelCpu,
     title: "Smart Tools",
     description: "Zoho, KI und DocuWare — intelligent verknüpft, einfach bedient.",
     glowClass: "neon-border-purple",
-    iconColor: "text-accent",
   },
 ];
 
@@ -42,7 +41,7 @@ const AboutSection = () => {
               key={card.title}
               className={`rounded-lg p-8 bg-card transition-transform duration-300 hover:-translate-y-2 ${card.glowClass}`}
             >
-              <card.icon className={`w-10 h-10 mx-auto mb-5 ${card.iconColor}`} />
+              <img src={card.icon} alt={card.title} className="w-10 h-10 mx-auto mb-5" style={{ imageRendering: "pixelated" }} loading="lazy" />
               <h3 className="font-pixel text-xs text-foreground mb-3">{card.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">{card.description}</p>
             </div>
