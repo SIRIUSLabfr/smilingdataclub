@@ -43,14 +43,6 @@ const LEVELS: Level[] = [
           { text: "Nein, nur eine Person hat alle Zugänge", points: 0 },
         ],
       },
-      {
-        text: "Könntet ihr nächsten Monat eure Bilanz erstellen, wenn eure Buchhaltungsperson heute kündigt?",
-        answers: [
-          { text: "Ja, kein Problem", points: 3 },
-          { text: "Mit Verzögerung und externer Hilfe", points: 2 },
-          { text: "Ehrlich? Keine Ahnung", points: 0 },
-        ],
-      },
     ],
   },
   {
@@ -64,7 +56,7 @@ const LEVELS: Level[] = [
         answers: [
           { text: "Ja, vollständig und aktuell", points: 3 },
           { text: "Das CRM wird genutzt, aber vieles fehlt", points: 2 },
-          { text: "Die wichtigsten Kontakte kennt nur der Vertriebler", points: 0 },
+          { text: "CRM???", points: 0 },
         ],
       },
       {
@@ -97,14 +89,6 @@ const LEVELS: Level[] = [
           { text: "Ja, in einem Passwort-Manager mit geteiltem Zugang", points: 3 },
           { text: "Teilweise, manches ist dokumentiert", points: 2 },
           { text: "Das meiste kennt nur eine Person", points: 0 },
-        ],
-      },
-      {
-        text: "Wurde euer Backup-System in den letzten 6 Monaten getestet — also ein echtes Restore durchgeführt?",
-        answers: [
-          { text: "Ja, regelmäßig", points: 3 },
-          { text: "Wir haben Backups, aber nie getestet", points: 2 },
-          { text: "Ich bin mir nicht sicher, ob wir Backups haben", points: 0 },
         ],
       },
       {
@@ -151,32 +135,32 @@ const LEVELS: Level[] = [
   },
   {
     key: "technik",
-    name: "TECHNIK / PRODUKTION",
+    name: "ENTWICKLUNG / PRODUKTION",
     icon: "⚙️",
-    intro: "Euer Techniker. Kennt jede Maschine. Weiß, warum Ventil 3 nach links muss. Steht in keinem Handbuch.",
+    intro: "Eure Produktion. Qualitätsstandards, Wissensmanagement, Prozessdokumentation — wer weiß, wie es wirklich läuft?",
     questions: [
       {
-        text: "Gibt es aktuelle Dokumentation für eure wichtigsten Maschinen, Anlagen oder technischen Systeme — inklusive Workarounds?",
+        text: "Ist euer Qualitätsmanagement (QM) so dokumentiert, dass eine neue Person die Standards sofort umsetzen könnte?",
         answers: [
-          { text: "Ja, vollständig und aktuell", points: 3 },
-          { text: "Herstellerdoku ja, interne Workarounds nein", points: 2 },
-          { text: "Das meiste ist Erfahrungswissen", points: 0 },
+          { text: "Ja, QM-Handbuch ist aktuell und vollständig", points: 3 },
+          { text: "Teilweise, aber vieles ist veraltet oder lückenhaft", points: 2 },
+          { text: "QM existiert nur in den Köpfen einzelner Mitarbeiter", points: 0 },
         ],
       },
       {
-        text: "Könnte ein externer Techniker eure Anlage innerhalb eines Tages wieder zum Laufen bringen, wenn der Hauptverantwortliche ausfällt?",
+        text: "Gibt es ein funktionierendes Wissensmanagement-System, in dem Produktionswissen, Rezepturen oder Verfahren festgehalten werden?",
         answers: [
-          { text: "Ja, alles ist nachvollziehbar dokumentiert", points: 3 },
-          { text: "Mit Schwierigkeiten", points: 2 },
-          { text: "Nein, da müsste man erstmal verstehen, was überhaupt verbaut ist", points: 0 },
+          { text: "Ja, systematisch gepflegt und für alle zugänglich", points: 3 },
+          { text: "Teilweise, aber nicht einheitlich oder aktuell", points: 2 },
+          { text: "Nein, das Wissen steckt in einzelnen Köpfen", points: 0 },
         ],
       },
       {
-        text: "Werden Änderungen an Konfigurationen, Einstellungen oder Prozessen protokolliert?",
+        text: "Werden Änderungen an Produktionsprozessen, Rezepturen oder Qualitätsstandards nachvollziehbar dokumentiert?",
         answers: [
-          { text: "Ja, systematisch", points: 3 },
-          { text: "Manchmal", points: 2 },
-          { text: "Nein", points: 0 },
+          { text: "Ja, mit Versionierung und Freigabeprozess", points: 3 },
+          { text: "Manchmal, aber nicht konsequent", points: 2 },
+          { text: "Nein, Änderungen werden einfach gemacht", points: 0 },
         ],
       },
     ],
@@ -237,9 +221,9 @@ const SOLUTIONS: Record<string, Record<string, string>> = {
     "GAME OVER": "Verträge, Fristen, Zugangscodes — alles im Kopf einer Person. Fällt sie aus, verpasst ihr Fristen, von denen ihr nicht mal wisst.",
   },
   technik: {
-    "MEDIUM RISK": "Herstellerdoku vorhanden, interne Workarounds fehlen. Eine Wissensdatenbank für eure spezifischen Anpassungen wäre der nächste Schritt.",
-    "HIGH RISK": "Technisches Erfahrungswissen ist nicht dokumentiert. Jeder Workaround, jede Sondereinstellung muss raus aus dem Kopf und rein ins System.",
-    "GAME OVER": "Eure Maschinen laufen, weil eine Person weiß, wie. Kein Handbuch, keine Doku, keine Chance für einen Ersatz. Maschine steht = Produktion steht.",
+    "MEDIUM RISK": "QM-Grundlagen vorhanden. Ein aktuelles Wissensmanagement-System und konsequente Prozessdokumentation würden euch absichern.",
+    "HIGH RISK": "Produktionswissen und Qualitätsstandards sind personengebunden. Ohne systematisches Wissensmanagement riskiert ihr Qualitätsverlust bei jedem Personalwechsel.",
+    "GAME OVER": "Kein dokumentiertes QM, kein Wissensmanagement. Eure Produktionsqualität hängt an einzelnen Köpfen. Fällt jemand aus, fehlt das Know-how.",
   },
   geschaeftsfuehrung: {
     "MEDIUM RISK": "Teilweise geregelt, aber nicht vollständig. Prokura, Notfallplan und dokumentierte Partnerschaften machen euch resilient.",
@@ -250,15 +234,17 @@ const SOLUTIONS: Record<string, Record<string, string>> = {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function getDeptRisk(score: number): string {
-  if (score >= 7) return "MEDIUM RISK";
-  if (score >= 4) return "HIGH RISK";
+function getDeptRisk(score: number, maxScore: number): string {
+  const pct = score / maxScore;
+  if (pct >= 0.75) return "MEDIUM RISK";
+  if (pct >= 0.4) return "HIGH RISK";
   return "GAME OVER";
 }
 
-function getOverallRisk(score: number): string {
-  if (score >= 45) return "STABIL";
-  if (score >= 28) return "VERWUNDBAR";
+function getOverallRisk(score: number, maxScore: number): string {
+  const pct = score / maxScore;
+  if (pct >= 0.75) return "STABIL";
+  if (pct >= 0.45) return "VERWUNDBAR";
   return "GAME OVER";
 }
 
@@ -331,12 +317,16 @@ const Game = () => {
   }, [screen]);
 
   // ── Scoring ──
-  const levelScores = LEVELS.map((_, li) => {
-    const start = li * 3;
-    return (answers[start] ?? 0) + (answers[start + 1] ?? 0) + (answers[start + 2] ?? 0);
+  const levelScores = LEVELS.map((level, li) => {
+    const start = LEVELS.slice(0, li).reduce((sum, l) => sum + l.questions.length, 0);
+    let score = 0;
+    for (let q = 0; q < level.questions.length; q++) score += answers[start + q] ?? 0;
+    return score;
   });
+  const totalQuestions = LEVELS.reduce((sum, l) => sum + l.questions.length, 0);
+  const maxScore = totalQuestions * 3;
   const totalScore = levelScores.reduce((a, b) => a + b, 0);
-  const overallRisk = getOverallRisk(totalScore);
+  const overallRisk = getOverallRisk(totalScore, maxScore);
 
   const handleAnswer = useCallback((points: number) => {
     setSelectedAnswer(points);
@@ -346,7 +336,7 @@ const Game = () => {
       setSelectedAnswer(null);
 
       const nextQ = currentQuestion + 1;
-      if (nextQ < 3) {
+      if (nextQ < LEVELS[currentLevel].questions.length) {
         setTransitioning(true);
         setTimeout(() => { setCurrentQuestion(nextQ); setTransitioning(false); }, 300);
       } else {
@@ -368,17 +358,18 @@ const Game = () => {
 
     const levelScoreData: Record<string, { score: number; max: number; risiko: string }> = {};
     LEVELS.forEach((l, i) => {
-      levelScoreData[l.key] = { score: levelScores[i], max: 9, risiko: getDeptRisk(levelScores[i]) };
+      const lMax = l.questions.length * 3;
+      levelScoreData[l.key] = { score: levelScores[i], max: lMax, risiko: getDeptRisk(levelScores[i], lMax) };
     });
 
     const payload = {
       ...formData,
       gesamtscore: totalScore,
-      max_score: 54,
+      max_score: maxScore,
       gesamt_risiko: overallRisk,
       level_scores: levelScoreData,
-      gameover_count: levelScores.filter(s => getDeptRisk(s) === "GAME OVER").length,
-      highrisk_count: levelScores.filter(s => getDeptRisk(s) === "HIGH RISK").length,
+      gameover_count: LEVELS.filter((l, i) => getDeptRisk(levelScores[i], l.questions.length * 3) === "GAME OVER").length,
+      highrisk_count: LEVELS.filter((l, i) => getDeptRisk(levelScores[i], l.questions.length * 3) === "HIGH RISK").length,
       antworten: answers,
     };
 
@@ -438,7 +429,7 @@ const Game = () => {
               START
             </button>
             <p className="text-muted-foreground text-xs mt-6">
-              6 Level · 18 Fragen · 1 ehrliches Ergebnis.
+              6 Level · {LEVELS.reduce((s, l) => s + l.questions.length, 0)} Fragen · 1 ehrliches Ergebnis.
             </p>
           </section>
         )}
@@ -463,7 +454,7 @@ const Game = () => {
 
             <div className={`transition-all duration-300 ${transitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}>
               <p className="font-pixel text-[10px] text-muted-foreground mb-2">
-                FRAGE {currentQuestion + 1}/3
+                FRAGE {currentQuestion + 1}/{LEVELS[currentLevel].questions.length}
               </p>
               <p className="text-foreground text-base md:text-lg mb-8 leading-relaxed">
                 {LEVELS[currentLevel].questions[currentQuestion].text}
@@ -501,13 +492,13 @@ const Game = () => {
               <p className={`font-pixel text-5xl md:text-7xl mb-4 ${riskColor(overallRisk).text} ${overallRisk === "GAME OVER" ? "animate-pulse" : ""}`}
                 style={{ textShadow: overallRisk === "GAME OVER" ? "0 0 20px hsl(0 70% 50% / 0.8), 0 0 40px hsl(0 70% 50% / 0.4)" : undefined }}
               >
-                {totalScore}/{54}
+                {totalScore}/{maxScore}
               </p>
               <p className={`font-pixel text-lg md:text-2xl mb-3 ${riskColor(overallRisk).text}`}>
                 {overallRisk}
               </p>
               <div className="max-w-md mx-auto mb-4">
-                <HealthBar value={totalScore} max={54} risk={overallRisk} />
+                <HealthBar value={totalScore} max={maxScore} risk={overallRisk} />
               </div>
               <p className="text-foreground/70 max-w-lg mx-auto">
                 {overallRisk === "STABIL" && "Euer Unternehmen ist gut abgesichert. Ihr gehört zur Minderheit."}
@@ -519,8 +510,9 @@ const Game = () => {
             {/* Department Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
               {LEVELS.map((level, i) => {
+                const lMax = level.questions.length * 3;
                 const score = levelScores[i];
-                const risk = getDeptRisk(score);
+                const risk = getDeptRisk(score, lMax);
                 const colors = riskColor(risk);
                 const solution = SOLUTIONS[level.key]?.[risk] ?? "";
                 return (
@@ -532,7 +524,7 @@ const Game = () => {
                       <span className="text-xl">{level.icon}</span>
                       <h3 className="font-pixel text-[10px] text-foreground">{level.name}</h3>
                     </div>
-                    <HealthBar value={score} max={9} risk={risk} />
+                    <HealthBar value={score} max={lMax} risk={risk} />
                     <p className={`font-pixel text-[9px] mt-2 ${colors.text}`}>{risk}</p>
                     <p className="text-foreground/60 text-xs mt-2 leading-relaxed">{solution}</p>
                   </div>
