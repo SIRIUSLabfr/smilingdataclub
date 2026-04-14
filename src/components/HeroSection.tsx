@@ -118,6 +118,13 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Krisen Simulator Button top-right */}
+      <a
+        href="/game"
+        className="absolute top-4 right-4 z-50 font-pixel text-[10px] md:text-xs px-3 py-2 border border-primary/60 rounded bg-background/80 text-primary hover:bg-primary/20 hover:shadow-[0_0_15px_hsl(var(--primary)/0.4)] transition-all duration-300 backdrop-blur-sm"
+      >
+        ⚡ KRISEN SIMULATOR
+      </a>
       <div className="absolute inset-0 synthwave-grid" />
       <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-accent/20 via-secondary/5 to-transparent" />
       <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-background to-transparent" />
