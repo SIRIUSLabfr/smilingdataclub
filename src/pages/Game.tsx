@@ -448,8 +448,8 @@ const Game = () => {
             <p className="font-pixel text-xs text-primary mb-2 tracking-widest">
               LEVEL {currentLevel + 1}/{LEVELS.length}
             </p>
-            <h2 className="font-pixel text-sm md:text-base text-secondary mb-4 text-glow-pink">
-              {LEVELS[currentLevel].icon} {LEVELS[currentLevel].name}
+            <h2 className="font-pixel text-sm md:text-base text-secondary mb-4 text-glow-pink flex items-center gap-2">
+              <img src={LEVELS[currentLevel].icon} alt="" className="w-6 h-6" style={{ imageRendering: "pixelated" }} /> {LEVELS[currentLevel].name}
             </h2>
 
             {currentQuestion === 0 && (
@@ -527,7 +527,7 @@ const Game = () => {
                     className={`rounded-lg border border-border/50 bg-card/60 p-5 ${colors.glow} transition-all`}
                   >
                     <div className="flex items-center gap-2 mb-3">
-                      <span className="text-xl">{level.icon}</span>
+                      <img src={level.icon} alt={level.name} className="w-8 h-8" style={{ imageRendering: "pixelated" }} loading="lazy" />
                       <h3 className="font-pixel text-[10px] text-foreground">{level.name}</h3>
                     </div>
                     <HealthBar value={score} max={lMax} risk={risk} />
