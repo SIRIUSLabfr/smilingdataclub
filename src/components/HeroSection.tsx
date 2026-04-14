@@ -38,43 +38,147 @@ const FlickerTagline = ({ text }: { text: string }) => {
   );
 };
 
-const PixelShip = () => {
-  const [ships, setShips] = useState<{ id: number; y: number; direction: number }[]>([]);
+const PacmanGhost = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const frameRef = useRef(0);
 
   useEffect(() => {
-    let idCounter = 0;
-    const launch = () => {
-      const id = idCounter++;
-      const y = 10 + Math.random() * 80;
-      const direction = Math.random() > 0.5 ? 1 : -1;
-      setShips(prev => [...prev, { id, y, direction }]);
-      setTimeout(() => {
-        setShips(prev => prev.filter(s => s.id !== id));
-      }, 3000);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d')!;
+    const W = canvas.width;
+    const H = canvas.height;
+    const P = 3; // pixel size
+
+    // Pac-Man: 9x9 pixel grid
+    const pacRight = [
+      [0,0,0,1,1,1,0,0,0],
+      [0,0,1,1,1,1,1,0,0],
+      [0,1,1,1,1,1,1,1,0],
+      [1,1,1,1,1,1,0,0,0],
+      [1,1,1,1,1,0,0,0,0],
+      [1,1,1,1,1,1,0,0,0],
+      [0,1,1,1,1,1,1,1,0],
+      [0,0,1,1,1,1,1,0,0],
+      [0,0,0,1,1,1,0,0,0],
+    ];
+    const pacClosed = [
+      [0,0,0,1,1,1,0,0,0],
+      [0,0,1,1,1,1,1,0,0],
+      [0,1,1,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1,1,0],
+      [1,1,1,1,1,1,1,1,0],
+      [0,1,1,1,1,1,1,1,0],
+      [0,0,1,1,1,1,1,0,0],
+      [0,0,0,1,1,1,0,0,0],
+    ];
+
+    // Ghost: 9x9
+    const ghost = [
+      [0,0,0,1,1,1,0,0,0],
+      [0,0,1,1,1,1,1,0,0],
+      [0,1,1,1,1,1,1,1,0],
+      [0,1,2,2,1,2,2,1,0],
+      [0,1,2,2,1,2,2,1,0],
+      [1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1],
+      [1,1,1,1,1,1,1,1,1],
+      [1,0,1,0,1,0,1,0,1],
+    ];
+
+    const ghostColors = ['#ff0000', '#ffb8ff', '#00ffff', '#ffb852'];
+    const dots: { x: number; y: number; eaten: boolean }[] = [];
+    for (let i = 0; i < 20; i++) {
+      dots.push({ x: Math.random() * (W - 20) + 10, y: Math.random() * (H - 20) + 10, eaten: false });
+    }
+
+    // State
+    let px = -30, py = H * 0.5;
+    let dir = 1; // 1=right, -1=left
+    let speed = 1.2;
+    let mouthOpen = true;
+    let mouthTimer = 0;
+    const ghosts = ghostColors.map((c, i) => ({
+      x: -60 - i * 35,
+      y: H * 0.5,
+      color: c,
+    }));
+
+    const drawSprite = (sprite: number[][], x: number, y: number, color: string, flipH = false) => {
+      for (let r = 0; r < sprite.length; r++) {
+        for (let c = 0; c < sprite[r].length; c++) {
+          if (sprite[r][c] === 0) continue;
+          const cx = flipH ? (sprite[r].length - 1 - c) : c;
+          if (sprite[r][c] === 2) {
+            ctx.fillStyle = '#ffffff';
+          } else {
+            ctx.fillStyle = color;
+          }
+          ctx.fillRect(x + cx * P, y + r * P, P, P);
+        }
+      }
     };
 
-    const interval = setInterval(launch, 15000);
-    const initial = setTimeout(launch, 7000);
-    return () => { clearInterval(interval); clearTimeout(initial); };
+    const animate = () => {
+      ctx.clearRect(0, 0, W, H);
+
+      // Dots
+      ctx.fillStyle = '#ffff00';
+      for (const d of dots) {
+        if (d.eaten) continue;
+        const dist = Math.hypot(px - d.x, py - d.y);
+        if (dist < 12) { d.eaten = true; continue; }
+        ctx.fillRect(d.x, d.y, P, P);
+      }
+
+      // Respawn dots
+      if (dots.every(d => d.eaten)) {
+        for (const d of dots) {
+          d.eaten = false;
+          d.x = Math.random() * (W - 20) + 10;
+          d.y = Math.random() * (H - 20) + 10;
+        }
+      }
+
+      // Move pac-man
+      px += speed * dir;
+      mouthTimer++;
+      if (mouthTimer % 8 === 0) mouthOpen = !mouthOpen;
+
+      // Bounce at edges
+      if (px > W + 40) { dir = -1; py = 20 + Math.random() * (H - 40); }
+      if (px < -50) { dir = 1; py = 20 + Math.random() * (H - 40); }
+
+      // Draw pac-man
+      const pacSprite = mouthOpen ? pacRight : pacClosed;
+      drawSprite(pacSprite, px, py, '#ffff00', dir === -1);
+
+      // Move & draw ghosts
+      for (let i = 0; i < ghosts.length; i++) {
+        const g = ghosts[i];
+        const targetX = px - dir * (30 + i * 30);
+        const targetY = py;
+        g.x += (targetX - g.x) * 0.03;
+        g.y += (targetY - g.y) * 0.03;
+        drawSprite(ghost, g.x, g.y, g.color, dir === -1);
+      }
+
+      frameRef.current = requestAnimationFrame(animate);
+    };
+
+    frameRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(frameRef.current);
   }, []);
 
   return (
-    <>
-      {ships.map(ship => (
-        <div
-          key={ship.id}
-          className="pixel-ship fixed pointer-events-none z-50"
-          style={{
-            top: `${ship.y}%`,
-            animationDirection: ship.direction === 1 ? 'normal' : 'reverse',
-          }}
-        >
-          <span className="text-xs" style={{ imageRendering: 'pixelated', fontSize: '14px' }}>
-            {ship.direction === 1 ? '▶' : '◀'}
-          </span>
-        </div>
-      ))}
-    </>
+    <canvas
+      ref={canvasRef}
+      width={600}
+      height={600}
+      className="absolute inset-0 w-full h-full pointer-events-none z-[5]"
+      style={{ imageRendering: 'pixelated', opacity: 0.4 }}
+    />
   );
 };
 
@@ -358,8 +462,8 @@ const HeroSection = () => {
       <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-accent/20 via-secondary/5 to-transparent" />
       <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-background to-transparent" />
 
-      {/* Pixel ship Easter egg */}
-      <PixelShip />
+      {/* Pac-Man animation */}
+      <PacmanGhost />
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
         <div className="mb-8">
