@@ -391,7 +391,7 @@ const HeroSection = () => {
 
         <a
           href="/game"
-          className="font-pixel text-[10px] md:text-xs px-2 py-2 border border-accent rounded bg-background/80 text-primary hover:bg-accent/20 hover:shadow-[0_0_15px_hsl(var(--accent)/0.4)] transition-all duration-300 backdrop-blur-sm inline-grid grid-cols-[48px_1fr_48px] items-center text-center"
+          className="font-pixel text-[10px] md:text-xs px-2 py-2 border border-accent rounded bg-background/80 text-primary hover:bg-accent/20 hover:shadow-[0_0_15px_hsl(var(--accent)/0.4)] transition-all duration-300 backdrop-blur-sm inline-grid grid-cols-[32px_auto_32px] items-center justify-items-center gap-1 text-center"
         >
           <PixelBomb />
           <span>KRISEN SIMULATOR</span>
