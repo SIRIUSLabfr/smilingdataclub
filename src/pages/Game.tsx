@@ -315,10 +315,14 @@ const Game = () => {
   }, [screen]);
 
   // ── Scoring ──
-  const levelScores = LEVELS.map((_, li) => {
-    const start = li * 3;
-    return (answers[start] ?? 0) + (answers[start + 1] ?? 0) + (answers[start + 2] ?? 0);
+  const levelScores = LEVELS.map((level, li) => {
+    const start = LEVELS.slice(0, li).reduce((sum, l) => sum + l.questions.length, 0);
+    let score = 0;
+    for (let q = 0; q < level.questions.length; q++) score += answers[start + q] ?? 0;
+    return score;
   });
+  const totalQuestions = LEVELS.reduce((sum, l) => sum + l.questions.length, 0);
+  const maxScore = totalQuestions * 3;
   const totalScore = levelScores.reduce((a, b) => a + b, 0);
   const overallRisk = getOverallRisk(totalScore);
 
@@ -330,7 +334,7 @@ const Game = () => {
       setSelectedAnswer(null);
 
       const nextQ = currentQuestion + 1;
-      if (nextQ < 3) {
+      if (nextQ < LEVELS[currentLevel].questions.length) {
         setTransitioning(true);
         setTimeout(() => { setCurrentQuestion(nextQ); setTransitioning(false); }, 300);
       } else {
@@ -422,7 +426,7 @@ const Game = () => {
               START
             </button>
             <p className="text-muted-foreground text-xs mt-6">
-              6 Level · 18 Fragen · 1 ehrliches Ergebnis.
+              6 Level · {LEVELS.reduce((s, l) => s + l.questions.length, 0)} Fragen · 1 ehrliches Ergebnis.
             </p>
           </section>
         )}
@@ -447,7 +451,7 @@ const Game = () => {
 
             <div className={`transition-all duration-300 ${transitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}>
               <p className="font-pixel text-[10px] text-muted-foreground mb-2">
-                FRAGE {currentQuestion + 1}/3
+                FRAGE {currentQuestion + 1}/{LEVELS[currentLevel].questions.length}
               </p>
               <p className="text-foreground text-base md:text-lg mb-8 leading-relaxed">
                 {LEVELS[currentLevel].questions[currentQuestion].text}
@@ -485,13 +489,13 @@ const Game = () => {
               <p className={`font-pixel text-5xl md:text-7xl mb-4 ${riskColor(overallRisk).text} ${overallRisk === "GAME OVER" ? "animate-pulse" : ""}`}
                 style={{ textShadow: overallRisk === "GAME OVER" ? "0 0 20px hsl(0 70% 50% / 0.8), 0 0 40px hsl(0 70% 50% / 0.4)" : undefined }}
               >
-                {totalScore}/{54}
+                {totalScore}/{maxScore}
               </p>
               <p className={`font-pixel text-lg md:text-2xl mb-3 ${riskColor(overallRisk).text}`}>
                 {overallRisk}
               </p>
               <div className="max-w-md mx-auto mb-4">
-                <HealthBar value={totalScore} max={54} risk={overallRisk} />
+                <HealthBar value={totalScore} max={maxScore} risk={overallRisk} />
               </div>
               <p className="text-foreground/70 max-w-lg mx-auto">
                 {overallRisk === "STABIL" && "Euer Unternehmen ist gut abgesichert. Ihr gehört zur Minderheit."}
