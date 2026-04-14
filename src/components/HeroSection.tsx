@@ -78,19 +78,7 @@ const PixelShip = () => {
   );
 };
 
-interface Particle {
-  x: number;
-  y: number;
-  originX: number;
-  originY: number;
-  color: string;
-  size: number;
-  vx: number;
-  vy: number;
-  alpha: number;
-}
-
-const PixelScatterCanvas = ({
+const PixelateCanvas = ({
   imageSrc,
   width,
   height,
@@ -102,16 +90,10 @@ const PixelScatterCanvas = ({
   active: boolean;
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<Particle[]>([]);
   const animFrameRef = useRef<number>(0);
-  const phaseRef = useRef<'idle' | 'scatter' | 'reassemble'>('idle');
-  const progressRef = useRef(0);
   const imgRef = useRef<HTMLImageElement | null>(null);
-
-  // Canvas is 3x the logo size to give scatter room
-  const pad = width; // padding on each side = logo width
-  const cw = width + pad * 2;
-  const ch = height + pad * 2;
+  const phaseRef = useRef<'idle' | 'pixelate' | 'depixelate'>('idle');
+  const progressRef = useRef(0);
 
   useEffect(() => {
     const img = new Image();
@@ -119,45 +101,12 @@ const PixelScatterCanvas = ({
     img.src = imageSrc;
     img.onload = () => {
       imgRef.current = img;
-      const tmpCanvas = document.createElement('canvas');
-      const pixelSize = 4;
-      tmpCanvas.width = width;
-      tmpCanvas.height = height;
-      const ctx = tmpCanvas.getContext('2d')!;
-      ctx.drawImage(img, 0, 0, width, height);
-      const imageData = ctx.getImageData(0, 0, width, height);
-      const particles: Particle[] = [];
-
-      for (let y = 0; y < height; y += pixelSize) {
-        for (let x = 0; x < width; x += pixelSize) {
-          const i = (y * width + x) * 4;
-          const r = imageData.data[i];
-          const g = imageData.data[i + 1];
-          const b = imageData.data[i + 2];
-          const a = imageData.data[i + 3];
-          if (a < 30) continue;
-
-          const angle = Math.random() * Math.PI * 2;
-          const speed = 1.5 + Math.random() * 4;
-          particles.push({
-            x: x + pad, y: y + pad,
-            originX: x + pad,
-            originY: y + pad,
-            color: `rgba(${r},${g},${b},${a / 255})`,
-            size: pixelSize,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            alpha: 1,
-          });
-        }
-      }
-      particlesRef.current = particles;
     };
-  }, [imageSrc, width, height, pad]);
+  }, [imageSrc]);
 
   useEffect(() => {
     if (active && phaseRef.current === 'idle') {
-      phaseRef.current = 'scatter';
+      phaseRef.current = 'pixelate';
       progressRef.current = 0;
     }
   }, [active]);
@@ -167,59 +116,49 @@ const PixelScatterCanvas = ({
     if (!canvas) return;
     const ctx = canvas.getContext('2d')!;
 
+    const drawPixelated = (pixelSize: number) => {
+      if (!imgRef.current) return;
+      const small = document.createElement('canvas');
+      const sw = Math.max(1, Math.floor(width / pixelSize));
+      const sh = Math.max(1, Math.floor(height / pixelSize));
+      small.width = sw;
+      small.height = sh;
+      const sctx = small.getContext('2d')!;
+      sctx.imageSmoothingEnabled = false;
+      sctx.drawImage(imgRef.current, 0, 0, sw, sh);
+      ctx.clearRect(0, 0, width, height);
+      ctx.imageSmoothingEnabled = false;
+      ctx.drawImage(small, 0, 0, sw, sh, 0, 0, width, height);
+    };
+
     const animate = () => {
-      ctx.clearRect(0, 0, cw, ch);
-      const particles = particlesRef.current;
+      ctx.clearRect(0, 0, width, height);
 
       if (phaseRef.current === 'idle') {
         if (imgRef.current) {
-          ctx.drawImage(imgRef.current, pad, pad, width, height);
+          ctx.imageSmoothingEnabled = true;
+          ctx.drawImage(imgRef.current, 0, 0, width, height);
         }
-      } else if (phaseRef.current === 'scatter') {
-        progressRef.current += 0.018;
+      } else if (phaseRef.current === 'pixelate') {
+        progressRef.current += 0.02;
         const t = Math.min(progressRef.current, 1);
-        const eased = t * t;
-
-        for (const p of particles) {
-          p.x = p.originX + p.vx * eased * 60;
-          p.y = p.originY + p.vy * eased * 60;
-          p.alpha = Math.max(0, 1 - eased * 1.2);
-
-          ctx.globalAlpha = p.alpha;
-          ctx.fillStyle = p.color;
-          ctx.fillRect(p.x, p.y, p.size, p.size);
-        }
-        ctx.globalAlpha = 1;
+        // pixel size goes from 1 (sharp) to 32 (very blocky)
+        const pixelSize = 1 + Math.floor(t * t * 31);
+        drawPixelated(pixelSize);
 
         if (t >= 1) {
-          phaseRef.current = 'reassemble';
+          phaseRef.current = 'depixelate';
           progressRef.current = 0;
         }
-      } else if (phaseRef.current === 'reassemble') {
+      } else if (phaseRef.current === 'depixelate') {
         progressRef.current += 0.025;
         const t = Math.min(progressRef.current, 1);
-        const eased = 1 - (1 - t) * (1 - t);
-
-        for (const p of particles) {
-          const scatteredX = p.originX + p.vx * 60;
-          const scatteredY = p.originY + p.vy * 60;
-          p.x = scatteredX + (p.originX - scatteredX) * eased;
-          p.y = scatteredY + (p.originY - scatteredY) * eased;
-          p.alpha = Math.min(1, eased * 1.3);
-
-          ctx.globalAlpha = p.alpha;
-          ctx.fillStyle = p.color;
-          ctx.fillRect(p.x, p.y, p.size, p.size);
-        }
-        ctx.globalAlpha = 1;
+        // pixel size goes from 32 (blocky) back to 1 (sharp)
+        const pixelSize = 1 + Math.floor((1 - t) * (1 - t) * 31);
+        drawPixelated(pixelSize);
 
         if (t >= 1) {
           phaseRef.current = 'idle';
-          for (const p of particles) {
-            p.x = p.originX;
-            p.y = p.originY;
-            p.alpha = 1;
-          }
         }
       }
 
@@ -228,18 +167,17 @@ const PixelScatterCanvas = ({
 
     animFrameRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animFrameRef.current);
-  }, [cw, ch, width, height, pad]);
+  }, [width, height]);
 
   return (
     <canvas
       ref={canvasRef}
-      width={cw}
-      height={ch}
+      width={width}
+      height={height}
       style={{
         imageRendering: 'pixelated',
-        width: cw,
-        height: ch,
-        margin: `-${pad}px`,
+        width,
+        height,
       }}
     />
   );
