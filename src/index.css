@@ -407,3 +407,8 @@
   text-shadow: 0 0 6px hsl(var(--neon-cyan) / 0.8);
   font-family: monospace;
 }
+
+@keyframes bomb-particle {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx, 20px), var(--ty, -20px)) scale(0.3); }
+}
