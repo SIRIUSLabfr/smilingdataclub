@@ -234,15 +234,17 @@ const SOLUTIONS: Record<string, Record<string, string>> = {
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function getDeptRisk(score: number): string {
-  if (score >= 7) return "MEDIUM RISK";
-  if (score >= 4) return "HIGH RISK";
+function getDeptRisk(score: number, maxScore: number): string {
+  const pct = score / maxScore;
+  if (pct >= 0.75) return "MEDIUM RISK";
+  if (pct >= 0.4) return "HIGH RISK";
   return "GAME OVER";
 }
 
-function getOverallRisk(score: number): string {
-  if (score >= 45) return "STABIL";
-  if (score >= 28) return "VERWUNDBAR";
+function getOverallRisk(score: number, maxScore: number): string {
+  const pct = score / maxScore;
+  if (pct >= 0.75) return "STABIL";
+  if (pct >= 0.45) return "VERWUNDBAR";
   return "GAME OVER";
 }
 
