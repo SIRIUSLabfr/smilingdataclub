@@ -38,7 +38,7 @@ const FlickerTagline = ({ text }: { text: string }) => {
   );
 };
 
-const PacmanGhost = () => {
+const PongBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const frameRef = useRef(0);
 
@@ -50,119 +50,88 @@ const PacmanGhost = () => {
     const H = canvas.height;
     const P = 3; // pixel size
 
-    // Pac-Man: 9x9 pixel grid
-    const pacRight = [
-      [0,0,0,1,1,1,0,0,0],
-      [0,0,1,1,1,1,1,0,0],
-      [0,1,1,1,1,1,1,1,0],
-      [1,1,1,1,1,1,0,0,0],
-      [1,1,1,1,1,0,0,0,0],
-      [1,1,1,1,1,1,0,0,0],
-      [0,1,1,1,1,1,1,1,0],
-      [0,0,1,1,1,1,1,0,0],
-      [0,0,0,1,1,1,0,0,0],
-    ];
-    const pacClosed = [
-      [0,0,0,1,1,1,0,0,0],
-      [0,0,1,1,1,1,1,0,0],
-      [0,1,1,1,1,1,1,1,0],
-      [1,1,1,1,1,1,1,1,0],
-      [1,1,1,1,1,1,1,1,0],
-      [1,1,1,1,1,1,1,1,0],
-      [0,1,1,1,1,1,1,1,0],
-      [0,0,1,1,1,1,1,0,0],
-      [0,0,0,1,1,1,0,0,0],
-    ];
-
-    // Ghost: 9x9
-    const ghost = [
-      [0,0,0,1,1,1,0,0,0],
-      [0,0,1,1,1,1,1,0,0],
-      [0,1,1,1,1,1,1,1,0],
-      [0,1,2,2,1,2,2,1,0],
-      [0,1,2,2,1,2,2,1,0],
-      [1,1,1,1,1,1,1,1,1],
-      [1,1,1,1,1,1,1,1,1],
-      [1,1,1,1,1,1,1,1,1],
-      [1,0,1,0,1,0,1,0,1],
-    ];
-
-    const ghostColors = ['#ff0000', '#ffb8ff', '#00ffff', '#ffb852'];
-    const dots: { x: number; y: number; eaten: boolean }[] = [];
-    for (let i = 0; i < 20; i++) {
-      dots.push({ x: Math.random() * (W - 20) + 10, y: Math.random() * (H - 20) + 10, eaten: false });
-    }
+    const paddleW = P * 2;
+    const paddleH = P * 8;
+    const ballSize = P * 2;
 
     // State
-    let px = 30, py = H * 0.5;
-    let dir = 1;
-    let speed = 1.2;
-    let mouthOpen = true;
-    let mouthTimer = 0;
-    const ghosts = ghostColors.map((c, i) => ({
-      x: px - (30 + i * 30),
-      y: py,
-      color: c,
-    }));
+    let ballX = W / 2, ballY = H / 2;
+    let bvx = 1.5, bvy = 1;
+    let leftY = H / 2 - paddleH / 2;
+    let rightY = H / 2 - paddleH / 2;
+    let leftScore = 0, rightScore = 0;
 
-    const drawSprite = (sprite: number[][], x: number, y: number, color: string, flipH = false) => {
-      for (let r = 0; r < sprite.length; r++) {
-        for (let c = 0; c < sprite[r].length; c++) {
-          if (sprite[r][c] === 0) continue;
-          const cx = flipH ? (sprite[r].length - 1 - c) : c;
-          if (sprite[r][c] === 2) {
-            ctx.fillStyle = '#ffffff';
-          } else {
-            ctx.fillStyle = color;
-          }
-          ctx.fillRect(x + cx * P, y + r * P, P, P);
+    const resetBall = () => {
+      ballX = W / 2;
+      ballY = H / 2;
+      bvx = (Math.random() > 0.5 ? 1 : -1) * 1.5;
+      bvy = (Math.random() - 0.5) * 2;
+    };
+
+    const drawPixelRect = (x: number, y: number, w: number, h: number) => {
+      // Draw as blocky pixels
+      for (let py = 0; py < h; py += P) {
+        for (let px = 0; px < w; px += P) {
+          ctx.fillRect(Math.floor(x + px), Math.floor(y + py), P, P);
         }
       }
     };
 
+    const drawScore = (score: number, cx: number) => {
+      const s = score.toString();
+      ctx.font = `${P * 5}px monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(s, cx, P * 8);
+    };
+
     const animate = () => {
       ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = 'hsl(172, 100%, 45%)';
 
-      // Dots
-      ctx.fillStyle = '#ffff00';
-      for (const d of dots) {
-        if (d.eaten) continue;
-        const dist = Math.hypot(px - d.x, py - d.y);
-        if (dist < 12) { d.eaten = true; continue; }
-        ctx.fillRect(d.x, d.y, P, P);
+      // Center dashed line
+      for (let y = 0; y < H; y += P * 4) {
+        ctx.fillRect(W / 2 - P / 2, y, P, P * 2);
       }
 
-      // Respawn dots
-      if (dots.every(d => d.eaten)) {
-        for (const d of dots) {
-          d.eaten = false;
-          d.x = Math.random() * (W - 20) + 10;
-          d.y = Math.random() * (H - 20) + 10;
-        }
+      // AI paddles (simple tracking)
+      const leftTarget = ballY - paddleH / 2;
+      const rightTarget = ballY - paddleH / 2;
+      leftY += (leftTarget - leftY) * 0.04;
+      rightY += (rightTarget - rightY) * 0.045;
+      leftY = Math.max(0, Math.min(H - paddleH, leftY));
+      rightY = Math.max(0, Math.min(H - paddleH, rightY));
+
+      // Move ball
+      ballX += bvx;
+      ballY += bvy;
+
+      // Top/bottom bounce
+      if (ballY <= 0 || ballY >= H - ballSize) bvy *= -1;
+
+      // Paddle collisions
+      if (ballX <= P * 4 + paddleW && ballY + ballSize >= leftY && ballY <= leftY + paddleH && bvx < 0) {
+        bvx *= -1;
+        bvy += (Math.random() - 0.5) * 0.5;
+      }
+      if (ballX >= W - P * 4 - paddleW - ballSize && ballY + ballSize >= rightY && ballY <= rightY + paddleH && bvx > 0) {
+        bvx *= -1;
+        bvy += (Math.random() - 0.5) * 0.5;
       }
 
-      // Move pac-man
-      px += speed * dir;
-      mouthTimer++;
-      if (mouthTimer % 8 === 0) mouthOpen = !mouthOpen;
+      // Scoring
+      if (ballX < 0) { rightScore = (rightScore + 1) % 10; resetBall(); }
+      if (ballX > W) { leftScore = (leftScore + 1) % 10; resetBall(); }
 
-      // Bounce at edges
-      if (px > W + 40) { dir = -1; py = 20 + Math.random() * (H - 40); }
-      if (px < -50) { dir = 1; py = 20 + Math.random() * (H - 40); }
+      // Draw paddles
+      drawPixelRect(P * 3, leftY, paddleW, paddleH);
+      drawPixelRect(W - P * 3 - paddleW, rightY, paddleW, paddleH);
 
-      // Draw pac-man
-      const pacSprite = mouthOpen ? pacRight : pacClosed;
-      drawSprite(pacSprite, px, py, '#ffff00', dir === -1);
+      // Draw ball
+      drawPixelRect(ballX, ballY, ballSize, ballSize);
 
-      // Move & draw ghosts (follow pac-man closely)
-      for (let i = 0; i < ghosts.length; i++) {
-        const g = ghosts[i];
-        const targetX = px - dir * (28 + i * 28);
-        const targetY = py;
-        g.x += (targetX - g.x) * 0.08;
-        g.y += (targetY - g.y) * 0.08;
-        drawSprite(ghost, g.x, g.y, g.color, dir === -1);
-      }
+      // Draw scores
+      drawScore(leftScore, W / 4);
+      drawScore(rightScore, (W / 4) * 3);
 
       frameRef.current = requestAnimationFrame(animate);
     };
@@ -177,7 +146,7 @@ const PacmanGhost = () => {
       width={600}
       height={600}
       className="absolute inset-0 w-full h-full pointer-events-none z-[5]"
-      style={{ imageRendering: 'pixelated', opacity: 0.4 }}
+      style={{ imageRendering: 'pixelated', opacity: 0.25 }}
     />
   );
 };
@@ -462,8 +431,8 @@ const HeroSection = () => {
       <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-accent/20 via-secondary/5 to-transparent" />
       <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-background to-transparent" />
 
-      {/* Pac-Man animation */}
-      <PacmanGhost />
+      {/* Pong background animation */}
+      <PongBackground />
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
         <div className="mb-8">
