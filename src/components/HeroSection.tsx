@@ -108,16 +108,19 @@ const PixelScatterCanvas = ({
   const progressRef = useRef(0);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
-  // Load image and extract pixels
+  // Canvas is 3x the logo size to give scatter room
+  const pad = width; // padding on each side = logo width
+  const cw = width + pad * 2;
+  const ch = height + pad * 2;
+
   useEffect(() => {
     const img = new Image();
     img.crossOrigin = 'anonymous';
     img.src = imageSrc;
     img.onload = () => {
       imgRef.current = img;
-      // Sample pixels from image
       const tmpCanvas = document.createElement('canvas');
-      const pixelSize = 4; // sample every 4px
+      const pixelSize = 4;
       tmpCanvas.width = width;
       tmpCanvas.height = height;
       const ctx = tmpCanvas.getContext('2d')!;
@@ -132,14 +135,14 @@ const PixelScatterCanvas = ({
           const g = imageData.data[i + 1];
           const b = imageData.data[i + 2];
           const a = imageData.data[i + 3];
-          if (a < 30) continue; // skip transparent pixels
+          if (a < 30) continue;
 
           const angle = Math.random() * Math.PI * 2;
           const speed = 1.5 + Math.random() * 4;
           particles.push({
-            x, y,
-            originX: x,
-            originY: y,
+            x: x + pad, y: y + pad,
+            originX: x + pad,
+            originY: y + pad,
             color: `rgba(${r},${g},${b},${a / 255})`,
             size: pixelSize,
             vx: Math.cos(angle) * speed,
@@ -150,7 +153,7 @@ const PixelScatterCanvas = ({
       }
       particlesRef.current = particles;
     };
-  }, [imageSrc, width, height]);
+  }, [imageSrc, width, height, pad]);
 
   useEffect(() => {
     if (active && phaseRef.current === 'idle') {
@@ -165,18 +168,17 @@ const PixelScatterCanvas = ({
     const ctx = canvas.getContext('2d')!;
 
     const animate = () => {
-      ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(0, 0, cw, ch);
       const particles = particlesRef.current;
 
       if (phaseRef.current === 'idle') {
-        // Draw original image
         if (imgRef.current) {
-          ctx.drawImage(imgRef.current, 0, 0, width, height);
+          ctx.drawImage(imgRef.current, pad, pad, width, height);
         }
       } else if (phaseRef.current === 'scatter') {
         progressRef.current += 0.018;
         const t = Math.min(progressRef.current, 1);
-        const eased = t * t; // ease-in
+        const eased = t * t;
 
         for (const p of particles) {
           p.x = p.originX + p.vx * eased * 60;
@@ -196,7 +198,6 @@ const PixelScatterCanvas = ({
       } else if (phaseRef.current === 'reassemble') {
         progressRef.current += 0.025;
         const t = Math.min(progressRef.current, 1);
-        // ease-out
         const eased = 1 - (1 - t) * (1 - t);
 
         for (const p of particles) {
@@ -214,7 +215,6 @@ const PixelScatterCanvas = ({
 
         if (t >= 1) {
           phaseRef.current = 'idle';
-          // Reset particles
           for (const p of particles) {
             p.x = p.originX;
             p.y = p.originY;
@@ -228,15 +228,19 @@ const PixelScatterCanvas = ({
 
     animFrameRef.current = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(animFrameRef.current);
-  }, [width, height]);
+  }, [cw, ch, width, height, pad]);
 
   return (
     <canvas
       ref={canvasRef}
-      width={width}
-      height={height}
-      className="mx-auto"
-      style={{ imageRendering: 'pixelated' }}
+      width={cw}
+      height={ch}
+      style={{
+        imageRendering: 'pixelated',
+        width: cw,
+        height: ch,
+        margin: `-${pad}px`,
+      }}
     />
   );
 };
