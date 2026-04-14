@@ -30,7 +30,7 @@ const LEVELS: Level[] = [
   {
     key: "buchhaltung",
     name: "BUCHHALTUNG",
-    icon: "💰",
+    icon: pixelBuchhaltung,
     intro: "Eure Buchhaltung. 14 Jahre Erfahrung. Kennt jeden Posten. Was, wenn sie morgen nicht mehr kommt?",
     questions: [
       {
@@ -54,7 +54,7 @@ const LEVELS: Level[] = [
   {
     key: "vertrieb",
     name: "VERTRIEB",
-    icon: "🤝",
+    icon: pixelVertrieb,
     intro: "Euer Vertriebsleiter. 120 Kontakte. Die besten davon nicht im CRM, sondern in seinem Kopf.",
     questions: [
       {
@@ -86,7 +86,7 @@ const LEVELS: Level[] = [
   {
     key: "it",
     name: "IT-ADMINISTRATION",
-    icon: "🖥️",
+    icon: pixelIt,
     intro: "Euer IT-Admin. Hält alles am Laufen. Aber weiß jemand anders, WIE?",
     questions: [
       {
@@ -110,7 +110,7 @@ const LEVELS: Level[] = [
   {
     key: "assistenz",
     name: "ASSISTENZ DER GF",
-    icon: "📋",
+    icon: pixelAssistenz,
     intro: "Sie kennt jede Frist, jeden Vertrag, jeden Code. Das organisatorische Gedächtnis eures Unternehmens.",
     questions: [
       {
@@ -142,7 +142,7 @@ const LEVELS: Level[] = [
   {
     key: "technik",
     name: "ENTWICKLUNG / PRODUKTION",
-    icon: "⚙️",
+    icon: pixelTechnik,
     intro: "Eure Produktion. Qualitätsstandards, Wissensmanagement, Prozessdokumentation — wer weiß, wie es wirklich läuft?",
     questions: [
       {
@@ -174,7 +174,7 @@ const LEVELS: Level[] = [
   {
     key: "geschaeftsfuehrung",
     name: "GESCHÄFTSFÜHRUNG",
-    icon: "👔",
+    icon: pixelGf,
     intro: "Und jetzt die unbequemste Frage: Was passiert, wenn IHR morgen nicht mehr da seid?",
     questions: [
       {
