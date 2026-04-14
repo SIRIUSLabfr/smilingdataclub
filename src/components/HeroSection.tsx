@@ -198,8 +198,8 @@ const PixelBomb = () => {
       ref={canvasRef}
       width={48}
       height={48}
-      className="inline-block align-middle"
-      style={{ imageRendering: 'pixelated', width: 48, height: 48 }}
+      className="inline-block align-middle mx-auto"
+      style={{ imageRendering: 'pixelated', width: 32, height: 32 }}
     />
   );
 };
