@@ -251,7 +251,7 @@ const HeroSection = () => {
                 loaded ? 'animate-fade-in' : 'opacity-0'
               }`}
             >
-              <PixelScatterCanvas
+              <PixelateCanvas
                 imageSrc={sdcLogo}
                 width={logoSize}
                 height={logoSize}
