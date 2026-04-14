@@ -88,8 +88,8 @@ const PixelBomb = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d')!;
-    const S = 32; // canvas size
-    const P = 2;  // pixel size for that chunky look
+    const S = 48; // canvas size
+    const P = 3;  // pixel size for that chunky look
 
     // Draw a pixel-art bomb (8x8 grid scaled by P)
     const drawBomb = () => {
@@ -196,10 +196,10 @@ const PixelBomb = () => {
   return (
     <canvas
       ref={canvasRef}
-      width={32}
-      height={32}
+      width={48}
+      height={48}
       className="inline-block align-middle"
-      style={{ imageRendering: 'pixelated', width: 32, height: 32 }}
+      style={{ imageRendering: 'pixelated', width: 48, height: 48 }}
     />
   );
 };
