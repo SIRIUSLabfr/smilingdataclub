@@ -386,10 +386,14 @@ const Game = () => {
     if (submitting) return;
     setSubmitting(true);
 
-    const levelScoreData: Record<string, { score: number; max: number; risiko: string }> = {};
+    const levelScoreData: Record<string, { score: number; max: number; risiko: string } | { risiko: string }> = {};
     LEVELS.forEach((l, i) => {
-      const lMax = l.questions.length * 3;
-      levelScoreData[l.key] = { score: levelScores[i], max: lMax, risiko: getDeptRisk(levelScores[i], lMax) };
+      if (skippedLevels.has(l.key)) {
+        levelScoreData[l.key] = { risiko: "NICHT RELEVANT" };
+      } else {
+        const lMax = l.questions.length * 3;
+        levelScoreData[l.key] = { score: levelScores[i], max: lMax, risiko: getDeptRisk(levelScores[i], lMax) };
+      }
     });
 
     const payload = {
@@ -398,8 +402,9 @@ const Game = () => {
       max_score: maxScore,
       gesamt_risiko: overallRisk,
       level_scores: levelScoreData,
-      gameover_count: LEVELS.filter((l, i) => getDeptRisk(levelScores[i], l.questions.length * 3) === "GAME OVER").length,
-      highrisk_count: LEVELS.filter((l, i) => getDeptRisk(levelScores[i], l.questions.length * 3) === "HIGH RISK").length,
+      skipped_levels: Array.from(skippedLevels),
+      gameover_count: LEVELS.filter((l, i) => !skippedLevels.has(l.key) && getDeptRisk(levelScores[i], l.questions.length * 3) === "GAME OVER").length,
+      highrisk_count: LEVELS.filter((l, i) => !skippedLevels.has(l.key) && getDeptRisk(levelScores[i], l.questions.length * 3) === "HIGH RISK").length,
       antworten: answers,
     };
 
@@ -424,6 +429,7 @@ const Game = () => {
     setCurrentLevel(0);
     setCurrentQuestion(0);
     setAnswers([]);
+    setSkippedLevels(new Set());
     setFormData({ vorname: "", nachname: "", email: "", unternehmen: "", rolle: "", mitarbeiter: "" });
     setFormSubmitted(false);
   };
