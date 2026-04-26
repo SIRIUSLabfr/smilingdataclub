@@ -248,6 +248,7 @@ function getDeptRisk(score: number, maxScore: number): string {
 }
 
 function getOverallRisk(score: number, maxScore: number): string {
+  if (maxScore === 0) return "STABIL";
   const pct = score / maxScore;
   if (pct >= 0.75) return "STABIL";
   if (pct >= 0.45) return "VERWUNDBAR";
@@ -308,6 +309,7 @@ const Game = () => {
   const [currentLevel, setCurrentLevel] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
+  const [skippedLevels, setSkippedLevels] = useState<Set<string>>(new Set());
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [transitioning, setTransitioning] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
@@ -329,10 +331,39 @@ const Game = () => {
     for (let q = 0; q < level.questions.length; q++) score += answers[start + q] ?? 0;
     return score;
   });
-  const totalQuestions = LEVELS.reduce((sum, l) => sum + l.questions.length, 0);
+  const activeLevels = LEVELS.filter(l => !skippedLevels.has(l.key));
+  const totalQuestions = activeLevels.reduce((sum, l) => sum + l.questions.length, 0);
   const maxScore = totalQuestions * 3;
-  const totalScore = levelScores.reduce((a, b) => a + b, 0);
+  const totalScore = LEVELS.reduce((sum, l, i) => skippedLevels.has(l.key) ? sum : sum + levelScores[i], 0);
   const overallRisk = getOverallRisk(totalScore, maxScore);
+
+  const advanceFromLevel = useCallback((fromLevel: number) => {
+    let next = fromLevel + 1;
+    if (next >= LEVELS.length) {
+      setScreen("result");
+      return;
+    }
+    setTransitioning(true);
+    setTimeout(() => { setCurrentLevel(next); setCurrentQuestion(0); setTransitioning(false); }, 500);
+  }, []);
+
+  const handleSkipLevel = useCallback(() => {
+    const key = LEVELS[currentLevel].key;
+    setSkippedLevels(prev => {
+      const n = new Set(prev);
+      n.add(key);
+      return n;
+    });
+    // Pad answers array so subsequent indexing stays aligned
+    const start = LEVELS.slice(0, currentLevel).reduce((sum, l) => sum + l.questions.length, 0);
+    const needed = start + LEVELS[currentLevel].questions.length;
+    setAnswers(prev => {
+      const padded = [...prev];
+      while (padded.length < needed) padded.push(0);
+      return padded;
+    });
+    advanceFromLevel(currentLevel);
+  }, [currentLevel, advanceFromLevel]);
 
   const handleAnswer = useCallback((points: number) => {
     setSelectedAnswer(points);
@@ -346,26 +377,24 @@ const Game = () => {
         setTransitioning(true);
         setTimeout(() => { setCurrentQuestion(nextQ); setTransitioning(false); }, 300);
       } else {
-        const nextLevel = currentLevel + 1;
-        if (nextLevel < LEVELS.length) {
-          setTransitioning(true);
-          setTimeout(() => { setCurrentLevel(nextLevel); setCurrentQuestion(0); setTransitioning(false); }, 500);
-        } else {
-          setScreen("result");
-        }
+        advanceFromLevel(currentLevel);
       }
     }, 400);
-  }, [answers, currentLevel, currentQuestion]);
+  }, [answers, currentLevel, currentQuestion, advanceFromLevel]);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting) return;
     setSubmitting(true);
 
-    const levelScoreData: Record<string, { score: number; max: number; risiko: string }> = {};
+    const levelScoreData: Record<string, { score: number; max: number; risiko: string } | { risiko: string }> = {};
     LEVELS.forEach((l, i) => {
-      const lMax = l.questions.length * 3;
-      levelScoreData[l.key] = { score: levelScores[i], max: lMax, risiko: getDeptRisk(levelScores[i], lMax) };
+      if (skippedLevels.has(l.key)) {
+        levelScoreData[l.key] = { risiko: "NICHT RELEVANT" };
+      } else {
+        const lMax = l.questions.length * 3;
+        levelScoreData[l.key] = { score: levelScores[i], max: lMax, risiko: getDeptRisk(levelScores[i], lMax) };
+      }
     });
 
     const payload = {
@@ -374,8 +403,9 @@ const Game = () => {
       max_score: maxScore,
       gesamt_risiko: overallRisk,
       level_scores: levelScoreData,
-      gameover_count: LEVELS.filter((l, i) => getDeptRisk(levelScores[i], l.questions.length * 3) === "GAME OVER").length,
-      highrisk_count: LEVELS.filter((l, i) => getDeptRisk(levelScores[i], l.questions.length * 3) === "HIGH RISK").length,
+      skipped_levels: Array.from(skippedLevels),
+      gameover_count: LEVELS.filter((l, i) => !skippedLevels.has(l.key) && getDeptRisk(levelScores[i], l.questions.length * 3) === "GAME OVER").length,
+      highrisk_count: LEVELS.filter((l, i) => !skippedLevels.has(l.key) && getDeptRisk(levelScores[i], l.questions.length * 3) === "HIGH RISK").length,
       antworten: answers,
     };
 
@@ -400,6 +430,7 @@ const Game = () => {
     setCurrentLevel(0);
     setCurrentQuestion(0);
     setAnswers([]);
+    setSkippedLevels(new Set());
     setFormData({ vorname: "", nachname: "", email: "", unternehmen: "", rolle: "", mitarbeiter: "" });
     setFormSubmitted(false);
   };
@@ -453,9 +484,18 @@ const Game = () => {
             </h2>
 
             {currentQuestion === 0 && (
-              <p className="text-foreground/70 text-sm mb-8 italic border-l-2 border-primary/40 pl-4">
-                {LEVELS[currentLevel].intro}
-              </p>
+              <div className="mb-8">
+                <p className="text-foreground/70 text-sm mb-3 italic border-l-2 border-primary/40 pl-4">
+                  {LEVELS[currentLevel].intro}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleSkipLevel}
+                  className="font-pixel text-[9px] text-muted-foreground hover:text-secondary transition-colors underline-offset-4 hover:underline tracking-wider ml-4"
+                >
+                  → Bei uns nicht relevant — Level überspringen
+                </button>
+              </div>
             )}
 
             <div className={`transition-all duration-300 ${transitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}>
@@ -516,23 +556,33 @@ const Game = () => {
             {/* Department Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
               {LEVELS.map((level, i) => {
+                const isSkipped = skippedLevels.has(level.key);
                 const lMax = level.questions.length * 3;
                 const score = levelScores[i];
-                const risk = getDeptRisk(score, lMax);
+                const risk = isSkipped ? "" : getDeptRisk(score, lMax);
                 const colors = riskColor(risk);
-                const solution = SOLUTIONS[level.key]?.[risk] ?? "";
+                const solution = isSkipped ? "" : (SOLUTIONS[level.key]?.[risk] ?? "");
                 return (
                   <div
                     key={level.key}
-                    className={`rounded-lg border border-border/50 bg-card/60 p-5 ${colors.glow} transition-all`}
+                    className={`rounded-lg border border-border/50 bg-card/60 p-5 ${isSkipped ? "opacity-50" : colors.glow} transition-all`}
                   >
                     <div className="flex items-center gap-2 mb-3">
                       <img src={level.icon} alt={level.name} className="w-8 h-8" style={{ imageRendering: "pixelated" }} loading="lazy" />
                       <h3 className="font-pixel text-[10px] text-foreground">{level.name}</h3>
                     </div>
-                    <HealthBar value={score} max={lMax} risk={risk} />
-                    <p className={`font-pixel text-[9px] mt-2 ${colors.text}`}>{risk}</p>
-                    <p className="text-foreground/60 text-xs mt-2 leading-relaxed">{solution}</p>
+                    {isSkipped ? (
+                      <>
+                        <p className="font-pixel text-[9px] mt-2 text-muted-foreground tracking-widest">NICHT RELEVANT</p>
+                        <p className="text-foreground/40 text-xs mt-2 leading-relaxed italic">Dieses Level wurde übersprungen.</p>
+                      </>
+                    ) : (
+                      <>
+                        <HealthBar value={score} max={lMax} risk={risk} />
+                        <p className={`font-pixel text-[9px] mt-2 ${colors.text}`}>{risk}</p>
+                        <p className="text-foreground/60 text-xs mt-2 leading-relaxed">{solution}</p>
+                      </>
+                    )}
                   </div>
                 );
               })}
