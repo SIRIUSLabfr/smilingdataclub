@@ -315,7 +315,7 @@ const Game = () => {
   const [fadeIn, setFadeIn] = useState(false);
 
   // Form state
-  const [formData, setFormData] = useState({ vorname: "", nachname: "", email: "", unternehmen: "", rolle: "", mitarbeiter: "" });
+  const [formData, setFormData] = useState({ vorname: "", nachname: "", email: "", unternehmen: "", rolle: "", mitarbeiter: "", newsletter: false });
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -651,6 +651,18 @@ const Game = () => {
                       Mit dem Absenden stimmst du unserer{" "}
                       <Link to="/datenschutz" className="underline hover:text-primary">Datenschutzerklärung</Link> zu.
                     </p>
+
+                    <label className="flex items-start gap-2 text-[10px] text-muted-foreground/80 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.newsletter}
+                        onChange={(e) => setFormData({ ...formData, newsletter: e.target.checked })}
+                        className="mt-0.5 h-3 w-3 accent-primary cursor-pointer"
+                      />
+                      <span>
+                        Ja, schickt mir gerne weitere Tipps zu Wissensmanagement, Digitalisierung und KI im Mittelstand. Abmeldung jederzeit per Klick.
+                      </span>
+                    </label>
                   </form>
                 </div>
               ) : (
