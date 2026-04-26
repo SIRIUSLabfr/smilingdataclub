@@ -308,6 +308,7 @@ const Game = () => {
   const [currentLevel, setCurrentLevel] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
+  const [skippedLevels, setSkippedLevels] = useState<Set<string>>(new Set());
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [transitioning, setTransitioning] = useState(false);
   const [fadeIn, setFadeIn] = useState(false);
