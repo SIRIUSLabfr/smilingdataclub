@@ -330,10 +330,39 @@ const Game = () => {
     for (let q = 0; q < level.questions.length; q++) score += answers[start + q] ?? 0;
     return score;
   });
-  const totalQuestions = LEVELS.reduce((sum, l) => sum + l.questions.length, 0);
+  const activeLevels = LEVELS.filter(l => !skippedLevels.has(l.key));
+  const totalQuestions = activeLevels.reduce((sum, l) => sum + l.questions.length, 0);
   const maxScore = totalQuestions * 3;
-  const totalScore = levelScores.reduce((a, b) => a + b, 0);
+  const totalScore = LEVELS.reduce((sum, l, i) => skippedLevels.has(l.key) ? sum : sum + levelScores[i], 0);
   const overallRisk = getOverallRisk(totalScore, maxScore);
+
+  const advanceFromLevel = useCallback((fromLevel: number) => {
+    let next = fromLevel + 1;
+    if (next >= LEVELS.length) {
+      setScreen("result");
+      return;
+    }
+    setTransitioning(true);
+    setTimeout(() => { setCurrentLevel(next); setCurrentQuestion(0); setTransitioning(false); }, 500);
+  }, []);
+
+  const handleSkipLevel = useCallback(() => {
+    const key = LEVELS[currentLevel].key;
+    setSkippedLevels(prev => {
+      const n = new Set(prev);
+      n.add(key);
+      return n;
+    });
+    // Pad answers array so subsequent indexing stays aligned
+    const start = LEVELS.slice(0, currentLevel).reduce((sum, l) => sum + l.questions.length, 0);
+    const needed = start + LEVELS[currentLevel].questions.length;
+    setAnswers(prev => {
+      const padded = [...prev];
+      while (padded.length < needed) padded.push(0);
+      return padded;
+    });
+    advanceFromLevel(currentLevel);
+  }, [currentLevel, advanceFromLevel]);
 
   const handleAnswer = useCallback((points: number) => {
     setSelectedAnswer(points);
@@ -347,16 +376,10 @@ const Game = () => {
         setTransitioning(true);
         setTimeout(() => { setCurrentQuestion(nextQ); setTransitioning(false); }, 300);
       } else {
-        const nextLevel = currentLevel + 1;
-        if (nextLevel < LEVELS.length) {
-          setTransitioning(true);
-          setTimeout(() => { setCurrentLevel(nextLevel); setCurrentQuestion(0); setTransitioning(false); }, 500);
-        } else {
-          setScreen("result");
-        }
+        advanceFromLevel(currentLevel);
       }
     }, 400);
-  }, [answers, currentLevel, currentQuestion]);
+  }, [answers, currentLevel, currentQuestion, advanceFromLevel]);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
