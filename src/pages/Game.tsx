@@ -248,6 +248,7 @@ function getDeptRisk(score: number, maxScore: number): string {
 }
 
 function getOverallRisk(score: number, maxScore: number): string {
+  if (maxScore === 0) return "STABIL";
   const pct = score / maxScore;
   if (pct >= 0.75) return "STABIL";
   if (pct >= 0.45) return "VERWUNDBAR";
