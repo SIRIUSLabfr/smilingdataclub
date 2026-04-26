@@ -483,9 +483,18 @@ const Game = () => {
             </h2>
 
             {currentQuestion === 0 && (
-              <p className="text-foreground/70 text-sm mb-8 italic border-l-2 border-primary/40 pl-4">
-                {LEVELS[currentLevel].intro}
-              </p>
+              <div className="mb-8">
+                <p className="text-foreground/70 text-sm mb-3 italic border-l-2 border-primary/40 pl-4">
+                  {LEVELS[currentLevel].intro}
+                </p>
+                <button
+                  type="button"
+                  onClick={handleSkipLevel}
+                  className="font-pixel text-[9px] text-muted-foreground hover:text-secondary transition-colors underline-offset-4 hover:underline tracking-wider ml-4"
+                >
+                  → Bei uns nicht relevant — Level überspringen
+                </button>
+              </div>
             )}
 
             <div className={`transition-all duration-300 ${transitioning ? "opacity-0 translate-y-4" : "opacity-100 translate-y-0"}`}>
