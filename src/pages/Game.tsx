@@ -555,23 +555,33 @@ const Game = () => {
             {/* Department Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-16">
               {LEVELS.map((level, i) => {
+                const isSkipped = skippedLevels.has(level.key);
                 const lMax = level.questions.length * 3;
                 const score = levelScores[i];
-                const risk = getDeptRisk(score, lMax);
+                const risk = isSkipped ? "" : getDeptRisk(score, lMax);
                 const colors = riskColor(risk);
-                const solution = SOLUTIONS[level.key]?.[risk] ?? "";
+                const solution = isSkipped ? "" : (SOLUTIONS[level.key]?.[risk] ?? "");
                 return (
                   <div
                     key={level.key}
-                    className={`rounded-lg border border-border/50 bg-card/60 p-5 ${colors.glow} transition-all`}
+                    className={`rounded-lg border border-border/50 bg-card/60 p-5 ${isSkipped ? "opacity-50" : colors.glow} transition-all`}
                   >
                     <div className="flex items-center gap-2 mb-3">
                       <img src={level.icon} alt={level.name} className="w-8 h-8" style={{ imageRendering: "pixelated" }} loading="lazy" />
                       <h3 className="font-pixel text-[10px] text-foreground">{level.name}</h3>
                     </div>
-                    <HealthBar value={score} max={lMax} risk={risk} />
-                    <p className={`font-pixel text-[9px] mt-2 ${colors.text}`}>{risk}</p>
-                    <p className="text-foreground/60 text-xs mt-2 leading-relaxed">{solution}</p>
+                    {isSkipped ? (
+                      <>
+                        <p className="font-pixel text-[9px] mt-2 text-muted-foreground tracking-widest">NICHT RELEVANT</p>
+                        <p className="text-foreground/40 text-xs mt-2 leading-relaxed italic">Dieses Level wurde übersprungen.</p>
+                      </>
+                    ) : (
+                      <>
+                        <HealthBar value={score} max={lMax} risk={risk} />
+                        <p className={`font-pixel text-[9px] mt-2 ${colors.text}`}>{risk}</p>
+                        <p className="text-foreground/60 text-xs mt-2 leading-relaxed">{solution}</p>
+                      </>
+                    )}
                   </div>
                 );
               })}
