@@ -431,7 +431,7 @@ const Game = () => {
     setCurrentQuestion(0);
     setAnswers([]);
     setSkippedLevels(new Set());
-    setFormData({ vorname: "", nachname: "", email: "", unternehmen: "", rolle: "", mitarbeiter: "" });
+    setFormData({ vorname: "", nachname: "", email: "", unternehmen: "", rolle: "", mitarbeiter: "", newsletter: false });
     setFormSubmitted(false);
   };
 
