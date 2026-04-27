@@ -8,7 +8,7 @@ import pixelAssistenz from "@/assets/pixel-assistenz.png";
 import pixelTechnik from "@/assets/pixel-technik.png";
 import pixelGf from "@/assets/pixel-gf.png";
 
-const WEBHOOK_URL = "https://flow.zoho.eu/20106110113/flow/webhook/incoming?zapikey=1001.bea2662a5053f5899950a8c8a31c3967.6a12d6f79383e3b9e1121e021314f0b2&isdebug=true";
+const WEBHOOK_URL = "https://flow.zoho.eu/20106110113/flow/webhook/incoming?zapikey=1001.b84ae2bf1ac2cd520ea3cde9c0e0dba4.811fd7618bb84f8f717ca8829159867c&isdebug=true";
 const BOOKING_URL = "https://PLATZHALTER.zohobookings.eu/...";
 
 // ── Data ──────────────────────────────────────────────────────────────────────
