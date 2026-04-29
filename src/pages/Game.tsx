@@ -305,6 +305,7 @@ function LevelProgress({ current, total }: { current: number; total: number }) {
 type Screen = "start" | "quiz" | "result";
 
 const Game = () => {
+  const navigate = useNavigate();
   const [screen, setScreen] = useState<Screen>("start");
   const [currentLevel, setCurrentLevel] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -419,9 +420,29 @@ const Game = () => {
         ),
       });
     } catch {
-      // silent
+      // silent — User-Erlebnis vor Tracking-Datenintegrität
     }
-    setFormSubmitted(true);
+
+    // Auswertungs-Daten als base64-JSON in den URL-Hash kodieren
+    // (Hashes werden NICHT an Server gesendet → keine PII in Netlify-Logs)
+    const auswertung = {
+      vorname: formData.vorname,
+      gesamtscore: totalScore,
+      max_score: maxScore,
+      gesamt_risiko: overallRisk,
+      level_scores: levelScoreData,
+      skipped_levels: Array.from(skippedLevels),
+    };
+    try {
+      const json = JSON.stringify(auswertung);
+      const bytes = new TextEncoder().encode(json);
+      let binary = "";
+      bytes.forEach((b) => (binary += String.fromCharCode(b)));
+      const b64 = btoa(binary);
+      navigate(`/game/auswertung#data=${encodeURIComponent(b64)}`);
+    } catch {
+      navigate("/game/auswertung");
+    }
     setSubmitting(false);
   };
 
