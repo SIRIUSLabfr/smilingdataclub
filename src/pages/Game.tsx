@@ -398,6 +398,32 @@ const Game = () => {
       }
     });
 
+    // Auswertungs-Daten als base64-JSON in den URL-Hash kodieren
+    // (Hashes werden NICHT an Server gesendet → keine PII in Netlify-Logs)
+    const auswertung = {
+      vorname: formData.vorname,
+      gesamtscore: totalScore,
+      max_score: maxScore,
+      gesamt_risiko: overallRisk,
+      level_scores: levelScoreData,
+      skipped_levels: Array.from(skippedLevels),
+    };
+
+    let auswertungUrl = `${window.location.origin}/game/auswertung`;
+    let auswertungHashPath = "/game/auswertung";
+    try {
+      const json = JSON.stringify(auswertung);
+      const bytes = new TextEncoder().encode(json);
+      let binary = "";
+      bytes.forEach((b) => (binary += String.fromCharCode(b)));
+      const b64 = btoa(binary);
+      const encoded = encodeURIComponent(b64);
+      auswertungUrl = `${window.location.origin}/game/auswertung#data=${encoded}`;
+      auswertungHashPath = `/game/auswertung#data=${encoded}`;
+    } catch {
+      // fallback ohne Hash
+    }
+
     const payload = {
       ...formData,
       gesamtscore: totalScore,
@@ -408,6 +434,7 @@ const Game = () => {
       gameover_count: LEVELS.filter((l, i) => !skippedLevels.has(l.key) && getDeptRisk(levelScores[i], l.questions.length * 3) === "GAME OVER").length,
       highrisk_count: LEVELS.filter((l, i) => !skippedLevels.has(l.key) && getDeptRisk(levelScores[i], l.questions.length * 3) === "HIGH RISK").length,
       antworten: answers,
+      auswertung_url: auswertungUrl,
     };
 
     try {
@@ -423,26 +450,7 @@ const Game = () => {
       // silent — User-Erlebnis vor Tracking-Datenintegrität
     }
 
-    // Auswertungs-Daten als base64-JSON in den URL-Hash kodieren
-    // (Hashes werden NICHT an Server gesendet → keine PII in Netlify-Logs)
-    const auswertung = {
-      vorname: formData.vorname,
-      gesamtscore: totalScore,
-      max_score: maxScore,
-      gesamt_risiko: overallRisk,
-      level_scores: levelScoreData,
-      skipped_levels: Array.from(skippedLevels),
-    };
-    try {
-      const json = JSON.stringify(auswertung);
-      const bytes = new TextEncoder().encode(json);
-      let binary = "";
-      bytes.forEach((b) => (binary += String.fromCharCode(b)));
-      const b64 = btoa(binary);
-      navigate(`/game/auswertung#data=${encodeURIComponent(b64)}`);
-    } catch {
-      navigate("/game/auswertung");
-    }
+    navigate(auswertungHashPath);
     setSubmitting(false);
   };
 
