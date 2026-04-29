@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import FooterSection from "@/components/FooterSection";
 import pixelBuchhaltung from "@/assets/pixel-buchhaltung.png";
 import pixelVertrieb from "@/assets/pixel-vertrieb.png";

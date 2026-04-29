@@ -8,6 +8,7 @@ import Impressum from "./pages/Impressum.tsx";
 import Datenschutz from "./pages/Datenschutz.tsx";
 import NotFound from "./pages/NotFound.tsx";
 import Game from "./pages/Game.tsx";
+import Auswertung from "./pages/Auswertung.tsx";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/impressum" element={<Impressum />} />
           <Route path="/datenschutz" element={<Datenschutz />} />
           <Route path="/game" element={<Game />} />
+          <Route path="/game/auswertung" element={<Auswertung />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
