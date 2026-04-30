@@ -607,7 +607,7 @@ const Game = () => {
                       </>
                     ) : (
                       <>
-                        <HealthBar value={score} max={lMax} risk={risk} />
+                        <HealthBar value={lMax - score} max={lMax} risk={risk} />
                         <p className={`font-pixel text-[9px] mt-2 ${colors.text}`}>{risk}</p>
                         <p className="text-foreground/60 text-xs mt-2 leading-relaxed">{solution}</p>
                       </>
