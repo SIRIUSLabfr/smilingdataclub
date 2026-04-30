@@ -251,11 +251,11 @@ const Auswertung = () => {
                   : undefined,
             }}
           >
-            {data.gesamtscore}/{data.max_score}
+            {data.max_score - data.gesamtscore}/{data.max_score}
           </p>
 
           <div className="max-w-md mx-auto mb-4">
-            <HealthBar value={data.gesamtscore} max={data.max_score} risk={data.gesamt_risiko} />
+            <HealthBar value={data.max_score - data.gesamtscore} max={data.max_score} risk={data.gesamt_risiko} />
           </div>
 
           <p className={`font-pixel text-lg md:text-2xl mt-4 ${overallColors.text}`}>
