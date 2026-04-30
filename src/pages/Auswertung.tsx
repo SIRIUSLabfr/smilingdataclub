@@ -166,7 +166,7 @@ const Auswertung = () => {
       const ra = RISK_ORDER[a.risiko] ?? 99;
       const rb = RISK_ORDER[b.risiko] ?? 99;
       if (ra !== rb) return ra - rb;
-      // gleicher Risiko-Bucket: schlechterer prozentualer Score zuerst
+      // gleicher Risiko-Bucket: schlechterer Score zuerst (niedrigste Resilienz = höchstes Risiko)
       return a.score / a.max - b.score / b.max;
     });
   }, [data]);
@@ -251,11 +251,11 @@ const Auswertung = () => {
                   : undefined,
             }}
           >
-            {data.gesamtscore}/{data.max_score}
+            {data.max_score - data.gesamtscore}/{data.max_score}
           </p>
 
           <div className="max-w-md mx-auto mb-4">
-            <HealthBar value={data.gesamtscore} max={data.max_score} risk={data.gesamt_risiko} />
+            <HealthBar value={data.max_score - data.gesamtscore} max={data.max_score} risk={data.gesamt_risiko} />
           </div>
 
           <p className={`font-pixel text-lg md:text-2xl mt-4 ${overallColors.text}`}>
@@ -300,7 +300,7 @@ const Auswertung = () => {
                     </div>
 
                     <div className="mb-4">
-                      <HealthBar value={b.score} max={b.max} risk={b.risiko} />
+                      <HealthBar value={b.max - b.score} max={b.max} risk={b.risiko} />
                     </div>
 
                     {content && (

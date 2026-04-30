@@ -567,13 +567,13 @@ const Game = () => {
               <p className={`font-pixel text-5xl md:text-7xl mb-4 ${riskColor(overallRisk).text} ${overallRisk === "GAME OVER" ? "animate-pulse" : ""}`}
                 style={{ textShadow: overallRisk === "GAME OVER" ? "0 0 20px hsl(0 70% 50% / 0.8), 0 0 40px hsl(0 70% 50% / 0.4)" : undefined }}
               >
-                {totalScore}/{maxScore}
+                {maxScore - totalScore}/{maxScore}
               </p>
               <p className={`font-pixel text-lg md:text-2xl mb-3 ${riskColor(overallRisk).text}`}>
                 {overallRisk}
               </p>
               <div className="max-w-md mx-auto mb-4">
-                <HealthBar value={totalScore} max={maxScore} risk={overallRisk} />
+                <HealthBar value={maxScore - totalScore} max={maxScore} risk={overallRisk} />
               </div>
               <p className="text-foreground/70 max-w-lg mx-auto">
                 {overallRisk === "STABIL" && "Euer Unternehmen ist gut abgesichert. Ihr gehört zur Minderheit."}
@@ -607,7 +607,7 @@ const Game = () => {
                       </>
                     ) : (
                       <>
-                        <HealthBar value={score} max={lMax} risk={risk} />
+                        <HealthBar value={lMax - score} max={lMax} risk={risk} />
                         <p className={`font-pixel text-[9px] mt-2 ${colors.text}`}>{risk}</p>
                         <p className="text-foreground/60 text-xs mt-2 leading-relaxed">{solution}</p>
                       </>
