@@ -300,7 +300,7 @@ const Auswertung = () => {
                     </div>
 
                     <div className="mb-4">
-                      <HealthBar value={b.score} max={b.max} risk={b.risiko} />
+                      <HealthBar value={b.max - b.score} max={b.max} risk={b.risiko} />
                     </div>
 
                     {content && (
