@@ -166,8 +166,8 @@ const Auswertung = () => {
       const ra = RISK_ORDER[a.risiko] ?? 99;
       const rb = RISK_ORDER[b.risiko] ?? 99;
       if (ra !== rb) return ra - rb;
-      // gleicher Risiko-Bucket: schlechterer prozentualer Score zuerst
-      return a.score / a.max - b.score / b.max;
+      // gleicher Risiko-Bucket: höherer Risiko-Anteil zuerst
+      return b.score / b.max - a.score / a.max;
     });
   }, [data]);
 
